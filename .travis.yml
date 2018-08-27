@@ -1,0 +1,8 @@
+services:
+  - docker
+
+install:
+  - docker pull elixir:1.7.2
+
+script:
+  - docker run -w="/app" -v $(pwd):/app --rm -it elixir:1.7.2 bash -c "mix local.hex --force && mix deps.get && mix local.rebar --force && mix test --cover && mix format --check-formatted"

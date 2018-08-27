@@ -6,7 +6,7 @@ If you plan on using this library you probably shouldn't.
 
 If something doesn't work that's your problem, mkay?
 
-No tests, no real-world usage, nothing. Let's hope this piece of _software_ won't destroy you database.
+~~No tests~~ Some tests, no real-world usage, nothing. Let's hope this piece of _software_ won't destroy you database.
 
 ## Installation
 

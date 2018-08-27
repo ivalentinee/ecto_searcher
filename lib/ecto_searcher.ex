@@ -16,15 +16,19 @@ defmodule EctoSearcher do
     searchable_params =
       Enum.filter(search_params, fn {key, _} -> key in searchable_field_names end)
 
-    queries = build_search_queries(searchable_params, queries_module)
-    query_composition = compose_queries(queries)
-    Query.from(base_query, where: ^query_composition)
+    where_conditions = build_where_conditions(searchable_params, queries_module)
+
+    if is_nil(where_conditions) do
+      base_query
+    else
+      Query.from(base_query, where: ^where_conditions)
+    end
   end
 
-  defp build_search_queries(search_params, queries_module) do
-    Enum.map(search_params, fn search_param ->
-      search_field(search_param, queries_module)
-    end)
+  defp build_where_conditions(search_params, queries_module) do
+    search_params
+    |> Enum.map(fn search_param -> search_field(search_param, queries_module) end)
+    |> compose_queries
   end
 
   defp search_field({field, conditions}, queries_module) do
@@ -57,9 +61,9 @@ defmodule EctoSearcher do
     if Enum.any?(queries) do
       queries
       |> Enum.reject(&is_nil/1)
-      |> Enum.reduce(fn query, composition -> Query.dynamic(^query and ^composition) end)
+      |> Enum.reduce(fn query, composition -> Query.dynamic(^composition and ^query) end)
     else
-      []
+      nil
     end
   end
 end
