@@ -54,6 +54,10 @@ defmodule EctoSearcher.Queries do
       def query(field, {"lteq", value}) do
         Query.dynamic([q], field(q, ^field) <= ^value)
       end
+
+      def query(field, {"overlaps", value}) when is_list(value) do
+        Query.dynamic([q], fragment("? && ?", field(q, ^field), ^value))
+      end
     end
   end
 end

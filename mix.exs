@@ -20,7 +20,7 @@ defmodule EctoSearcher.MixProject do
     [extra_applications: extra_applications(Mix.env())]
   end
 
-  defp extra_applications(:test), do: [:logger, :postgrex]
+  defp extra_applications(:test), do: [:logger]
   defp extra_applications(_), do: [:logger]
 
   # Run "mix help deps" to learn about dependencies.
