@@ -1,5 +1,7 @@
 # Ecto Searcher
 
+[![Build Status](https://travis-ci.org/vemperor/ecto_searcher.svg?branch=master)](https://travis-ci.org/vemperor/ecto_searcher)
+
 EctoSearcher is an attempt to bring dynamicly built queries (hello [Ransack](https://github.com/activerecord-hackery/ransack)) to the world of [Ecto](https://github.com/elixir-ecto/ecto).
 
 If you plan on using this library you probably shouldn't.
