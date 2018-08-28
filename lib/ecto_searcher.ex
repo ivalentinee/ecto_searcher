@@ -1,5 +1,13 @@
 defmodule EctoSearcher do
-  @moduledoc nil
+  @moduledoc """
+  Module for searching
+
+  ## Usage
+  searhable_fields = [:name, :description]
+  search = %{"name" => %{"eq" => "Donald Trump"}, "description" => %{"cont" => "My president"}}
+  query = EctoSearcher.search(MyMegaModel, search, searchable_fields)
+  MySuperApp.Repo.all(query)
+  """
 
   require Ecto.Query
   alias Ecto.Query
