@@ -27,37 +27,37 @@ defmodule EctoSearcher.Conditions do
       alias Ecto.Query
 
       def condition(field, {"eq", value}) do
-        Query.dynamic([q], field(q, ^field) == ^value)
+        Query.dynamic([q], ^field == ^value)
       end
 
       def condition(field, {"cont", value}) when is_binary(value) do
-        Query.dynamic([q], ilike(field(q, ^field), ^"%#{value}%"))
+        Query.dynamic([q], ilike(^field, ^"%#{value}%"))
       end
 
       def condition(field, {"in", value}) when is_list(value) do
-        Query.dynamic([q], field(q, ^field) in ^value)
+        Query.dynamic([q], ^field in ^value)
       end
 
       def condition(_field, {"in", _value}), do: nil
 
       def condition(field, {"gt", value}) do
-        Query.dynamic([q], field(q, ^field) > ^value)
+        Query.dynamic([q], ^field > ^value)
       end
 
       def condition(field, {"lt", value}) do
-        Query.dynamic([q], field(q, ^field) < ^value)
+        Query.dynamic([q], ^field < ^value)
       end
 
       def condition(field, {"gteq", value}) do
-        Query.dynamic([q], field(q, ^field) >= ^value)
+        Query.dynamic([q], ^field >= ^value)
       end
 
       def condition(field, {"lteq", value}) do
-        Query.dynamic([q], field(q, ^field) <= ^value)
+        Query.dynamic([q], ^field <= ^value)
       end
 
       def condition(field, {"overlaps", value}) when is_list(value) do
-        Query.dynamic([q], fragment("? && ?", field(q, ^field), ^value))
+        Query.dynamic([q], fragment("? && ?", ^field, ^value))
       end
     end
   end

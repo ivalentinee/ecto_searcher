@@ -35,25 +35,24 @@ defmodule EctoSearcher.Searcher do
     |> compose_queries
   end
 
-  defp search_field({field, conditions}, search_module) do
+  defp search_field({field, conditions}, search_module) when is_map(conditions) do
     field_name_as_atom = String.to_existing_atom(field)
+    field_query = EctoSearcher.Query.field_query(field_name_as_atom, search_module)
 
-    if is_map(conditions) do
-      conditions
-      |> build_condition_queries(field_name_as_atom, search_module)
-      |> compose_queries()
-    else
-      run_condition_on_field(field_name_as_atom, conditions, search_module)
-    end
+    conditions
+    |> build_condition_queries(field_query, search_module)
+    |> compose_queries()
   end
+
+  defp search_field(_, _), do: nil
 
   defp build_condition_queries(conditions, field, search_module) do
     Enum.map(conditions, fn condition ->
-      run_condition_on_field(field, condition, search_module)
+      field_condition(field, condition, search_module)
     end)
   end
 
-  defp run_condition_on_field(field, condition, search_module) do
+  defp field_condition(field, condition, search_module) do
     try do
       search_module.condition(field, condition)
     rescue

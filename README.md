@@ -49,11 +49,15 @@ end
 Advanced usage:
 ```elixir
 defmodule MySuperApp.CustomSearches do
-  use EctoSearcher.Queries
+  use EctoSearcher.Conditions
 
-  # You can define custom queries here! Wow! So impressive!
-  def query(:description_does_not_contain, value) do
-    Query.dynamic([q], not ilike(q.description, ^"%#{value}%"))
+  # You can define custom queries and conditions here! Wow! So impressive!
+  def query(:datetime_as_date) do
+    Query.dynamic([q], fragment("?::date", q.datetime))
+  end
+
+  def condition(field, {"not_eq", value}) do
+    Query.dynamic([q], ^field != ^value)
   end
 end
 
@@ -62,8 +66,12 @@ defmodule TotallyNotAPhoenixContext do
   require Ecto.Query
 
   def not_some_context_method() do
-    searhable_fields = [:name, :description_does_not_contain]
-    search = %{"name" => %{"eq" => "Donald Trump"}, "description_does_not_contain" => "Not my president"}
+    searhable_fields = [:name, :datetime_as_date, :description]
+    search = %{
+      "name" => %{"eq" => "Donald Trump"},
+      "datetime_as_date" => %{"gteq" => "2016-11-08", "lteq" => "2018-08-28"},
+      "description" => %{"not_eq" => "Not my president"}
+    }
     base_query = from(q in MyMegaModel, where: [q.id < 1984])
     query = EctoSearcher.Searcher.search(base_query, search, searchable_fields, MySuperApp.CustomSearches)
     MySuperApp.Repo.all(query)
