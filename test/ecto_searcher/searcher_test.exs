@@ -75,6 +75,19 @@ defmodule EctoSearcher.SearcherTest do
     assert inspect(expected_query) == inspect(query)
   end
 
+  test "returns base_query for incorrect search_params" do
+    query =
+      Searcher.search(
+        TestSchema,
+        "something completely incorrect",
+        [:test_field_one]
+      )
+
+    expected_query = TestSchema
+
+    assert inspect(expected_query) == inspect(query)
+  end
+
   test "ignores unknown conditions" do
     query =
       Searcher.search(

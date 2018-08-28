@@ -18,13 +18,8 @@ defmodule EctoSearcher.Searcher do
         searchable_fields,
         queries_module \\ EctoSearcher.DefaultQueries
       )
-      when is_map(search_params) and is_list(searchable_fields) do
-    searchable_field_names = Enum.map(searchable_fields, &to_string/1)
-
-    searchable_params =
-      Enum.filter(search_params, fn {key, _} -> key in searchable_field_names end)
-
-    where_conditions = build_where_conditions(searchable_params, queries_module)
+      when is_list(searchable_fields) do
+    where_conditions = build_where_conditions(search_params, searchable_fields, queries_module)
 
     if is_nil(where_conditions) do
       base_query
@@ -33,8 +28,9 @@ defmodule EctoSearcher.Searcher do
     end
   end
 
-  defp build_where_conditions(search_params, queries_module) do
+  defp build_where_conditions(search_params, searchable_fields, queries_module) do
     search_params
+    |> searchable_params(searchable_fields)
     |> Enum.map(fn search_param -> search_field(search_param, queries_module) end)
     |> compose_queries
   end
@@ -74,4 +70,11 @@ defmodule EctoSearcher.Searcher do
       nil
     end
   end
+
+  defp searchable_params(search_params, searchable_fields) when is_map(search_params) do
+    searchable_field_names = Enum.map(searchable_fields, &to_string/1)
+    Enum.filter(search_params, fn {key, _} -> key in searchable_field_names end)
+  end
+
+  defp searchable_params(_, _), do: %{}
 end
