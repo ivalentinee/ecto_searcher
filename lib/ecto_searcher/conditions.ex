@@ -1,4 +1,4 @@
-defmodule EctoSearcher.Queries do
+defmodule EctoSearcher.Conditions do
   @moduledoc """
   Contains default queries
 
@@ -10,7 +10,7 @@ defmodule EctoSearcher.Queries do
   end
   ```
 
-  ## Queries
+  ## Conditions
   - `eq` — equality (`field == value`)
   - `cont` — contains substring (`ilike(field, value)`)
   - `in` — inclusion (`field in value`)
@@ -18,6 +18,7 @@ defmodule EctoSearcher.Queries do
   - `gteq` — greater than or equal (`field >= value`)
   - `lt` — less than (`field < value`)
   - `lteq` — less than or equal (`field <= value`)
+  - `overlaps` — arrays overlap (`field && value`)
   """
 
   defmacro __using__(_) do
@@ -25,37 +26,37 @@ defmodule EctoSearcher.Queries do
       require Ecto.Query
       alias Ecto.Query
 
-      def query(field, {"eq", value}) do
+      def condition(field, {"eq", value}) do
         Query.dynamic([q], field(q, ^field) == ^value)
       end
 
-      def query(field, {"cont", value}) when is_binary(value) do
+      def condition(field, {"cont", value}) when is_binary(value) do
         Query.dynamic([q], ilike(field(q, ^field), ^"%#{value}%"))
       end
 
-      def query(field, {"in", value}) when is_list(value) do
+      def condition(field, {"in", value}) when is_list(value) do
         Query.dynamic([q], field(q, ^field) in ^value)
       end
 
-      def query(_field, {"in", _value}), do: nil
+      def condition(_field, {"in", _value}), do: nil
 
-      def query(field, {"gt", value}) do
+      def condition(field, {"gt", value}) do
         Query.dynamic([q], field(q, ^field) > ^value)
       end
 
-      def query(field, {"lt", value}) do
+      def condition(field, {"lt", value}) do
         Query.dynamic([q], field(q, ^field) < ^value)
       end
 
-      def query(field, {"gteq", value}) do
+      def condition(field, {"gteq", value}) do
         Query.dynamic([q], field(q, ^field) >= ^value)
       end
 
-      def query(field, {"lteq", value}) do
+      def condition(field, {"lteq", value}) do
         Query.dynamic([q], field(q, ^field) <= ^value)
       end
 
-      def query(field, {"overlaps", value}) when is_list(value) do
+      def condition(field, {"overlaps", value}) when is_list(value) do
         Query.dynamic([q], fragment("? && ?", field(q, ^field), ^value))
       end
     end

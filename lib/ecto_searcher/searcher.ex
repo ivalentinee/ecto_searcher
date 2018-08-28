@@ -16,10 +16,10 @@ defmodule EctoSearcher.Searcher do
         base_query,
         search_params,
         searchable_fields,
-        queries_module \\ EctoSearcher.DefaultQueries
+        search_module \\ EctoSearcher.DefaultSearch
       )
       when is_list(searchable_fields) do
-    where_conditions = build_where_conditions(search_params, searchable_fields, queries_module)
+    where_conditions = build_where_conditions(search_params, searchable_fields, search_module)
 
     if is_nil(where_conditions) do
       base_query
@@ -28,34 +28,34 @@ defmodule EctoSearcher.Searcher do
     end
   end
 
-  defp build_where_conditions(search_params, searchable_fields, queries_module) do
+  defp build_where_conditions(search_params, searchable_fields, search_module) do
     search_params
     |> searchable_params(searchable_fields)
-    |> Enum.map(fn search_param -> search_field(search_param, queries_module) end)
+    |> Enum.map(fn search_param -> search_field(search_param, search_module) end)
     |> compose_queries
   end
 
-  defp search_field({field, conditions}, queries_module) do
+  defp search_field({field, conditions}, search_module) do
     field_name_as_atom = String.to_existing_atom(field)
 
     if is_map(conditions) do
       conditions
-      |> build_condition_queries(field_name_as_atom, queries_module)
+      |> build_condition_queries(field_name_as_atom, search_module)
       |> compose_queries()
     else
-      run_query_on_field(field_name_as_atom, conditions, queries_module)
+      run_condition_on_field(field_name_as_atom, conditions, search_module)
     end
   end
 
-  defp build_condition_queries(conditions, field, queries_module) do
+  defp build_condition_queries(conditions, field, search_module) do
     Enum.map(conditions, fn condition ->
-      run_query_on_field(field, condition, queries_module)
+      run_condition_on_field(field, condition, search_module)
     end)
   end
 
-  defp run_query_on_field(field, condition, queries_module) do
+  defp run_condition_on_field(field, condition, search_module) do
     try do
-      queries_module.query(field, condition)
+      search_module.condition(field, condition)
     rescue
       FunctionClauseError -> nil
     end
