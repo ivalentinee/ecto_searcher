@@ -11,6 +11,7 @@ defmodule EctoSearcher.Searcher do
 
   require Ecto.Query
   alias Ecto.Query
+  alias EctoSearcher.Lookup
 
   def search(
         base_query,
@@ -37,7 +38,7 @@ defmodule EctoSearcher.Searcher do
 
   defp search_field({field, conditions}, search_module) when is_map(conditions) do
     field_name_as_atom = String.to_existing_atom(field)
-    field_query = EctoSearcher.Query.field_query(field_name_as_atom, search_module)
+    field_query = Lookup.field_query(field_name_as_atom, search_module)
 
     conditions
     |> build_condition_queries(field_query, search_module)
@@ -48,16 +49,8 @@ defmodule EctoSearcher.Searcher do
 
   defp build_condition_queries(conditions, field, search_module) do
     Enum.map(conditions, fn condition ->
-      field_condition(field, condition, search_module)
+      Lookup.field_condition(field, condition, search_module)
     end)
-  end
-
-  defp field_condition(field, condition, search_module) do
-    try do
-      search_module.condition(field, condition)
-    rescue
-      FunctionClauseError -> nil
-    end
   end
 
   defp compose_queries(queries) do
