@@ -4,12 +4,13 @@ defmodule EctoSearcher.SorterTest do
 
   use ExUnit.Case
 
+  alias EctoSearcher.Sorter
   alias Ecto.Query
   require Query
 
   test "builds asc sort query" do
     query =
-      EctoSearcher.Sorter.sort(
+      Sorter.sort(
         TestSchema,
         %{"field" => "test_field_one", "order" => "asc"},
         [:test_field_one]
@@ -22,7 +23,7 @@ defmodule EctoSearcher.SorterTest do
 
   test "builds desc sort query" do
     query =
-      EctoSearcher.Sorter.sort(
+      Sorter.sort(
         TestSchema,
         %{"field" => "test_field_one", "order" => "desc"},
         [:test_field_one]
@@ -35,7 +36,7 @@ defmodule EctoSearcher.SorterTest do
 
   test "ignores unpermitted fields" do
     query =
-      EctoSearcher.Sorter.sort(
+      Sorter.sort(
         TestSchema,
         %{"field" => "test_field_one", "order" => "asc"},
         [:test_field_two]
@@ -48,7 +49,7 @@ defmodule EctoSearcher.SorterTest do
 
   test "returns base_query for incorrect search_params" do
     query =
-      EctoSearcher.Sorter.sort(
+      Sorter.sort(
         TestSchema,
         "something completely incorrect",
         [:test_field_two]
