@@ -41,15 +41,16 @@ defmodule EctoSearcher.Searcher do
     field_query = Lookup.field_query(field_name_as_atom, search_module)
 
     conditions
-    |> build_condition_queries(field_query, search_module)
+    |> build_condition_queries(field_query, field_name_as_atom, search_module)
     |> compose_queries()
   end
 
   defp search_field(_, _), do: nil
 
-  defp build_condition_queries(conditions, field, search_module) do
-    Enum.map(conditions, fn condition ->
-      Lookup.field_condition(field, condition, search_module)
+  defp build_condition_queries(conditions, field, field_name, search_module) do
+    Enum.map(conditions, fn {condition, value} ->
+      casted_value = Lookup.casted_value(field_name, value, search_module)
+      Lookup.field_condition(field, condition, casted_value, search_module)
     end)
   end
 

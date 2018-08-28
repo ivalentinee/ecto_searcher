@@ -51,9 +51,13 @@ Advanced usage:
 defmodule MySuperApp.CustomSearches do
   use EctoSearcher.Conditions
 
-  # You can define custom queries and conditions here! Wow! So impressive!
+  # You can define custom queries, value casts and conditions here! Wow! So impressive!
   def query(:datetime_as_date) do
     Query.dynamic([q], fragment("?::date", q.datetime))
+  end
+
+  def cast_value(:datetime_as_date, value) do
+    Query.dynamic(type(^value, :date))
   end
 
   def condition(field, {"not_eq", value}) do

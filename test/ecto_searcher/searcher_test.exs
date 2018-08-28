@@ -104,7 +104,7 @@ defmodule EctoSearcher.SearcherTest do
     assert inspect(expected_query) == inspect(query)
   end
 
-  test "runs search with custom query and condition" do
+  test "runs search with custom query, value cast and condition" do
     query =
       Searcher.search(
         TestSchema,
@@ -119,7 +119,7 @@ defmodule EctoSearcher.SearcherTest do
     expected_query =
       Query.from(t in TestSchema,
         where:
-          fragment("?::date", t.custom_field) == ^"2018-08-28" and
+          fragment("?::date", t.custom_field) == type(^"2018-08-28", :date) and
             t.test_field_one != ^"some_value"
       )
 
