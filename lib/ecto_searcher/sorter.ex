@@ -13,7 +13,8 @@ defmodule EctoSearcher.Sorter do
   require Ecto.Query
   alias Ecto.Query
 
-  def sort(base_query, %{"field" => field, "order" => order}, sortable_fields) when is_list(sortable_fields) do
+  def sort(base_query, %{"field" => field, "order" => order}, sortable_fields)
+      when is_list(sortable_fields) do
     sortable_field_names = Enum.map(sortable_fields, &to_string/1)
 
     if field in sortable_field_names and order in @allowed_order_values do

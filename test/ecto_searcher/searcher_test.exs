@@ -1,15 +1,16 @@
-defmodule EctoSearcherTest do
+defmodule EctoSearcher.SearcherTest do
   # NOTE: tests heavily rely on inspect(ecto_query). Sorry. I know it's awful.
   #   http://alexkoppel.com/comparing-ecto-queries/ - this approach is no better I think
 
   use ExUnit.Case
 
+  alias EctoSearcher.Searcher
   alias Ecto.Query
   require Query
 
   test "builds query for one field" do
     query =
-      EctoSearcher.search(
+      Searcher.search(
         TestSchema,
         %{"test_field_one" => %{"eq" => "some value"}},
         [:test_field_one]
@@ -22,7 +23,7 @@ defmodule EctoSearcherTest do
 
   test "builds query for multiple conditions for one field" do
     query =
-      EctoSearcher.search(
+      Searcher.search(
         TestSchema,
         %{
           "test_field_one" => %{
@@ -41,7 +42,7 @@ defmodule EctoSearcherTest do
 
   test "builds query for multiple fields" do
     query =
-      EctoSearcher.search(
+      Searcher.search(
         TestSchema,
         %{
           "test_field_one" => %{"eq" => "some value"},
@@ -60,7 +61,7 @@ defmodule EctoSearcherTest do
 
   test "ignores unpermitted fields" do
     query =
-      EctoSearcher.search(
+      Searcher.search(
         TestSchema,
         %{
           "test_field_one" => %{"eq" => "some value"},
@@ -76,7 +77,7 @@ defmodule EctoSearcherTest do
 
   test "ignores unknown conditions" do
     query =
-      EctoSearcher.search(
+      Searcher.search(
         TestSchema,
         %{
           "test_field_one" => %{"eq" => "some value"},

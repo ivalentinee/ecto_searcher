@@ -33,13 +33,14 @@ defmodule MyMegaModel do
 end
 ```
 
+### Searching
 Basic usage:
 ```elixir
 defmodule TotallyNotAPhoenixController do
   def not_some_controller_method() do
     searhable_fields = [:name, :description]
     search = %{"name" => %{"eq" => "Donald Trump"}, "description" => %{"cont" => "My president"}}
-    query = EctoSearcher.search(MyMegaModel, search, searchable_fields)
+    query = EctoSearcher.Searcher.search(MyMegaModel, search, searchable_fields)
     MySuperApp.Repo.all(query)
   end
 end
@@ -64,11 +65,23 @@ defmodule TotallyNotAPhoenixContext do
     searhable_fields = [:name, :description_does_not_contain]
     search = %{"name" => %{"eq" => "Donald Trump"}, "description_does_not_contain" => "Not my president"}
     base_query = from(q in MyMegaModel, where: [q.id < 1984])
-    query = EctoSearcher.search(base_query, search, searchable_fields, MySuperApp.CustomSearches)
+    query = EctoSearcher.Searcher.search(base_query, search, searchable_fields, MySuperApp.CustomSearches)
+    MySuperApp.Repo.all(query)
+  end
+end
+```
+
+### Sorting
+```elixir
+defmodule TotallyNotAPhoenixController do
+  def not_some_controller_method() do
+    sortable_fields = [:name, :description]
+    sort = %{"field" => "name", "order" => "desc"}
+    query = EctoSearcher.Sorter.sort(MyMegaModel, sort, sortable_fields)
     MySuperApp.Repo.all(query)
   end
 end
 ```
 
 ## Explanation
-Just look the code. It's under 200 lines.
+Just look the code.
