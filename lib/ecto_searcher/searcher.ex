@@ -14,18 +14,20 @@ defmodule EctoSearcher.Searcher do
   alias EctoSearcher.Lookup
 
   def search(
-        base_query,
-        search_params,
-        searchable_fields,
-        search_module \\ EctoSearcher.DefaultSearch
-      )
-      when is_list(searchable_fields) do
-    where_conditions = build_where_conditions(search_params, searchable_fields, search_module)
+    schema,
+    search_params,
+    searchable_fields,
+    options \\ [base_query: nil, search_module: nil]
+  )
+  when is_list(searchable_fields) and is_list(options) do
+    where_conditions = build_where_conditions(search_params, searchable_fields, options[:search_module] || EctoSearcher.DefaultSearch)
+
+    query = options[:base_query] || schema
 
     if is_nil(where_conditions) do
-      base_query
+      query
     else
-      Query.from(base_query, where: ^where_conditions)
+      Query.from(query, where: ^where_conditions)
     end
   end
 

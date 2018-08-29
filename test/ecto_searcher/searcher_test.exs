@@ -113,7 +113,7 @@ defmodule EctoSearcher.SearcherTest do
           "custom_field_as_date" => %{"eq" => "2018-08-28"}
         },
         [:test_field_one, :custom_field_as_date],
-        TestCustomSearch
+        search_module: TestCustomSearch
       )
 
     expected_query =
