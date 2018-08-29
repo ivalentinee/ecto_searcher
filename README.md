@@ -77,7 +77,7 @@ defmodule TotallyNotAPhoenixContext do
       "description" => %{"not_eq" => "Not my president"}
     }
     base_query = from(q in MyMegaModel, where: [q.id < 1984])
-    query = EctoSearcher.Searcher.search(base_query, search, searchable_fields, MySuperApp.CustomSearches)
+    query = EctoSearcher.Searcher.search(base_query, MyMegaModel, search, searchable_fields, MySuperApp.CustomSearches)
     MySuperApp.Repo.all(query)
   end
 end

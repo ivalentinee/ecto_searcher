@@ -89,7 +89,7 @@ defmodule EctoSearcher.SearcherTest do
         [:test_field_one]
       )
 
-    expected_query = TestSchema
+    expected_query = Query.from(TestSchema)
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -120,7 +120,7 @@ defmodule EctoSearcher.SearcherTest do
           "custom_field_as_date" => %{"eq" => "2018-08-28"}
         },
         [:test_field_one, :custom_field_as_date],
-        search_module: TestCustomSearch
+        TestCustomSearch
       )
 
     expected_query =

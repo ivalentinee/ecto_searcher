@@ -17,18 +17,30 @@ defmodule EctoSearcher.Searcher do
         schema,
         search_params,
         searchable_fields,
-        options \\ [base_query: nil, search_module: nil]
+        search_module \\ EctoSearcher.DefaultSearch
       )
-      when is_list(searchable_fields) and is_list(options) do
+      when is_list(searchable_fields) and is_atom(search_module) do
+    base_query = Query.from(schema)
+    search(base_query, schema, search_params, searchable_fields, search_module)
+  end
+
+  def search(
+        base_query = %Ecto.Query{},
+        schema,
+        search_params,
+        searchable_fields,
+        search_module
+      )
+      when is_list(searchable_fields) and is_atom(search_module) do
     where_conditions =
       build_where_conditions(
         schema,
         search_params,
         searchable_fields,
-        options[:search_module] || EctoSearcher.DefaultSearch
+        search_module
       )
 
-    query = options[:base_query] || schema
+    query = base_query || schema
 
     if is_nil(where_conditions) do
       query
