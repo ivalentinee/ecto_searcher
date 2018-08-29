@@ -16,7 +16,8 @@ defmodule EctoSearcher.SearcherTest do
         [:test_field_one]
       )
 
-    expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
+    expected_query =
+      Query.from(t in TestSchema, where: t.test_field_one == type(^"some value", :string))
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -35,7 +36,9 @@ defmodule EctoSearcher.SearcherTest do
       )
 
     expected_query =
-      Query.from(t in TestSchema, where: t.test_field_one >= ^0 and t.test_field_one <= ^2)
+      Query.from(t in TestSchema,
+        where: t.test_field_one >= type(^0, :string) and t.test_field_one <= type(^2, :string)
+      )
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -53,7 +56,9 @@ defmodule EctoSearcher.SearcherTest do
 
     expected_query =
       Query.from(t in TestSchema,
-        where: t.test_field_one == ^"some value" and t.test_field_two == ^"some other value"
+        where:
+          t.test_field_one == type(^"some value", :string) and
+            t.test_field_two == type(^"some other value", :string)
       )
 
     assert inspect(expected_query) == inspect(query)
@@ -70,7 +75,8 @@ defmodule EctoSearcher.SearcherTest do
         [:test_field_one]
       )
 
-    expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
+    expected_query =
+      Query.from(t in TestSchema, where: t.test_field_one == type(^"some value", :string))
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -99,7 +105,8 @@ defmodule EctoSearcher.SearcherTest do
         [:test_field_one, :test_field_two]
       )
 
-    expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
+    expected_query =
+      Query.from(t in TestSchema, where: t.test_field_one == type(^"some value", :string))
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -109,7 +116,7 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "test_field_one" => %{"not_eq" => "some_value"},
+          "test_field_one" => %{"not_eq" => "some value"},
           "custom_field_as_date" => %{"eq" => "2018-08-28"}
         },
         [:test_field_one, :custom_field_as_date],
@@ -120,7 +127,7 @@ defmodule EctoSearcher.SearcherTest do
       Query.from(t in TestSchema,
         where:
           fragment("?::date", t.custom_field) == type(^"2018-08-28", :date) and
-            t.test_field_one != ^"some_value"
+            t.test_field_one != type(^"some value", :string)
       )
 
     assert inspect(expected_query) == inspect(query)

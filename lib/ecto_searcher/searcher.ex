@@ -14,13 +14,19 @@ defmodule EctoSearcher.Searcher do
   alias EctoSearcher.Lookup
 
   def search(
-    schema,
-    search_params,
-    searchable_fields,
-    options \\ [base_query: nil, search_module: nil]
-  )
-  when is_list(searchable_fields) and is_list(options) do
-    where_conditions = build_where_conditions(search_params, searchable_fields, options[:search_module] || EctoSearcher.DefaultSearch)
+        schema,
+        search_params,
+        searchable_fields,
+        options \\ [base_query: nil, search_module: nil]
+      )
+      when is_list(searchable_fields) and is_list(options) do
+    where_conditions =
+      build_where_conditions(
+        schema,
+        search_params,
+        searchable_fields,
+        options[:search_module] || EctoSearcher.DefaultSearch
+      )
 
     query = options[:base_query] || schema
 
@@ -31,27 +37,27 @@ defmodule EctoSearcher.Searcher do
     end
   end
 
-  defp build_where_conditions(search_params, searchable_fields, search_module) do
+  defp build_where_conditions(schema, search_params, searchable_fields, search_module) do
     search_params
     |> searchable_params(searchable_fields)
-    |> Enum.map(fn search_param -> search_field(search_param, search_module) end)
+    |> Enum.map(fn search_param -> search_field(schema, search_param, search_module) end)
     |> compose_queries
   end
 
-  defp search_field({field, conditions}, search_module) when is_map(conditions) do
+  defp search_field(schema, {field, conditions}, search_module) when is_map(conditions) do
     field_name_as_atom = String.to_existing_atom(field)
     field_query = Lookup.field_query(field_name_as_atom, search_module)
 
     conditions
-    |> build_condition_queries(field_query, field_name_as_atom, search_module)
+    |> build_condition_queries(schema, field_query, field_name_as_atom, search_module)
     |> compose_queries()
   end
 
-  defp search_field(_, _), do: nil
+  defp search_field(_, _, _), do: nil
 
-  defp build_condition_queries(conditions, field, field_name, search_module) do
+  defp build_condition_queries(conditions, schema, field, field_name, search_module) do
     Enum.map(conditions, fn {condition, value} ->
-      casted_value = Lookup.casted_value(field_name, value, search_module)
+      casted_value = Lookup.casted_value(schema, field_name, value, search_module)
       Lookup.field_condition(field, condition, casted_value, search_module)
     end)
   end
