@@ -5,9 +5,7 @@ defmodule TestCustomSearch do
     Query.dynamic([q], fragment("?::date", q.custom_field))
   end
 
-  def cast_value(:custom_field_as_date, value) do
-    Query.dynamic(type(^value, :date))
-  end
+  def value_type(:custom_field_as_date), do: :date
 
   def condition(field, "not_eq", value) do
     Query.dynamic([q], ^field != ^value)

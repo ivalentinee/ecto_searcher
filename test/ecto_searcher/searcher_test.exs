@@ -132,4 +132,22 @@ defmodule EctoSearcher.SearcherTest do
 
     assert inspect(expected_query) == inspect(query)
   end
+
+  test "runs search for aggregated condition" do
+    query =
+      Searcher.search(
+        TestSchema,
+        %{
+          "test_field_one" => %{"in" => [0, 1, 2, 3]}
+        },
+        [:test_field_one]
+      )
+
+    field = Query.dynamic([q], field(q, :test_field_one))
+    value = Query.dynamic([q], type(^[0, 1, 2, 3], {:array, :string}))
+    where_condition = Query.dynamic([q], ^field in ^value)
+    expected_query = Query.from(t in TestSchema, where: ^where_condition)
+
+    assert inspect(expected_query) == inspect(query)
+  end
 end

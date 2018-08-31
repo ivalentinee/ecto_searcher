@@ -69,7 +69,7 @@ defmodule EctoSearcher.Searcher do
 
   defp build_condition_queries(conditions, schema, field, field_name, search_module) do
     Enum.map(conditions, fn {condition, value} ->
-      casted_value = Lookup.casted_value(schema, field_name, value, search_module)
+      casted_value = Lookup.casted_value(schema, field_name, value, condition, search_module)
       Lookup.field_condition(field, condition, casted_value, search_module)
     end)
   end
