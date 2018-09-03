@@ -40,11 +40,8 @@ defmodule EctoSearcher.Lookup do
       end
 
     case Ecto.Type.cast(type, value) do
-      {ok, casted_value} ->
-        casted_value
-
-      _ ->
-        value
+      {:ok, casted_value} -> casted_value
+      _ -> value
     end
   end
 
