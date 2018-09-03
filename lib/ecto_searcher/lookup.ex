@@ -31,16 +31,19 @@ defmodule EctoSearcher.Lookup do
     lookup_search_module(search_module, :condition_aggregate_type, [condition])
   end
 
-  defp cast_value(value, type, aggregate_type) do
-    cond do
-      type && aggregate_type ->
-        aggregated_type = {aggregate_type, type}
-        Query.dynamic([q], type(^value, ^aggregated_type))
+  defp cast_value(value, plain_type, aggregate_type) do
+    type =
+      if aggregate_type do
+        {aggregate_type, plain_type}
+      else
+        plain_type
+      end
 
-      type ->
-        Query.dynamic([q], type(^value, ^type))
+    case Ecto.Type.cast(type, value) do
+      {ok, casted_value} ->
+        casted_value
 
-      true ->
+      _ ->
         value
     end
   end

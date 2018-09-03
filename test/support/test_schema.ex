@@ -4,6 +4,7 @@ defmodule TestSchema do
   schema "test_schema" do
     field(:test_field_one, :string)
     field(:test_field_two, :string)
-    field(:custom_field, :naive_datetime)
+    field(:datetime_field, :naive_datetime)
+    field(:integer_field, :integer)
   end
 end
