@@ -13,7 +13,7 @@ defmodule EctoSearcher.Lookup do
   end
 
   def casted_value(schema, field_name, value, condition, search_module) do
-    type = value_type(schema, field_name, search_module)
+    type = field_type(schema, field_name, search_module)
     aggregate_type = aggregate_type(condition, search_module)
     cast_value(value, type, aggregate_type)
   end
@@ -22,7 +22,7 @@ defmodule EctoSearcher.Lookup do
     Query.dynamic([q], field(q, ^field))
   end
 
-  defp value_type(schema, field_name, search_module) do
+  defp field_type(schema, field_name, search_module) do
     lookup_search_module(search_module, :value_type, [field_name]) ||
       schema.__schema__(:type, field_name)
   end
