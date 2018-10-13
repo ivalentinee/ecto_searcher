@@ -1,5 +1,5 @@
-defmodule TestCustomSearch do
-  use EctoSearcher.SearchQueries
+defmodule CustomMapping do
+  use EctoSearcher.Mapping
   require Ecto.Query
   alias Ecto.Query
 
@@ -10,7 +10,7 @@ defmodule TestCustomSearch do
 
     Map.merge(
       custom_conditions,
-      EctoSearcher.DefaultSearchQueries.conditions()
+      EctoSearcher.DefaultMapping.conditions()
     )
   end
 

@@ -3,14 +3,14 @@ defmodule EctoSearcher.Searcher.Value do
 
   alias Ecto.Type
 
-  def cast(schema, field_name, value, condition_name, search_module) do
-    type = field_type(schema, field_name, search_module)
-    condition_aggregate_type = condition_aggregate_type(condition_name, search_module)
+  def cast(schema, field_name, value, condition_name, mapping) do
+    type = field_type(schema, field_name, mapping)
+    condition_aggregate_type = condition_aggregate_type(condition_name, mapping)
     cast_value(value, type, condition_aggregate_type)
   end
 
-  defp field_type(schema, field_name, search_module) do
-    fields = search_module.fields
+  defp field_type(schema, field_name, mapping) do
+    fields = mapping.fields
 
     with true <- is_map(fields),
          true <- is_map(fields[field_name]),
@@ -22,8 +22,8 @@ defmodule EctoSearcher.Searcher.Value do
     end
   end
 
-  defp condition_aggregate_type(condition_name, search_module) do
-    conditions = search_module.conditions
+  defp condition_aggregate_type(condition_name, mapping) do
+    conditions = mapping.conditions
 
     with true <- is_map(conditions),
          true <- is_map(conditions[condition_name]),

@@ -12,7 +12,7 @@ defmodule EctoSearcher.SearcherTest do
     query =
       Searcher.search(
         TestSchema,
-        %{"test_field_one" => %{"eq" => "some value"}},
+        %{"test_field_one_eq" => "some value"},
         [:test_field_one]
       )
 
@@ -26,10 +26,8 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "test_field_one" => %{
-            "gteq" => "0",
-            "lteq" => "2"
-          }
+          "test_field_one_gteq" => "0",
+          "test_field_one_lteq" => "2"
         },
         [:test_field_one]
       )
@@ -47,8 +45,8 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "test_field_one" => %{"eq" => "some value"},
-          "test_field_two" => %{"eq" => "some other value"}
+          "test_field_one_eq" => "some value",
+          "test_field_two_eq" => "some other value"
         },
         [:test_field_one, :test_field_two]
       )
@@ -65,7 +63,7 @@ defmodule EctoSearcher.SearcherTest do
     query =
       Searcher.search(
         TestSchema,
-        %{"test_field_one" => %{"cont" => 12345}},
+        %{"test_field_one_cont" => 12345},
         [:test_field_one]
       )
 
@@ -79,8 +77,8 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "test_field_one" => %{"eq" => "some value"},
-          "test_field_two" => %{"eq" => "some other value"}
+          "test_field_one_eq" => "some value",
+          "test_field_two_eq" => "some other value"
         },
         [:test_field_one]
       )
@@ -108,8 +106,8 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "test_field_one" => %{"eq" => "some value"},
-          "test_field_two" => %{"unknown_condition" => "some other value"}
+          "test_field_one_eq" => "some value",
+          "test_field_two_unknown_condition" => "some other value"
         },
         [:test_field_one, :test_field_two]
       )
@@ -124,11 +122,11 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "test_field_one" => %{"not_eq" => "some value"},
-          "datetime_field_as_date" => %{"eq" => "2018-08-28"}
+          "test_field_one_not_eq" => "some value",
+          "datetime_field_as_date_eq" => "2018-08-28"
         },
         [:test_field_one, :datetime_field_as_date],
-        TestCustomSearch
+        CustomMapping
       )
 
     expected_query =
@@ -146,7 +144,7 @@ defmodule EctoSearcher.SearcherTest do
       Searcher.search(
         TestSchema,
         %{
-          "integer_field" => %{"in" => ["0", "1", "2", "3"]}
+          "integer_field_in" => ["0", "1", "2", "3"]
         },
         [:integer_field]
       )

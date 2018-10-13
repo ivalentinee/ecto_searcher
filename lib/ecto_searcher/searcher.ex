@@ -3,41 +3,68 @@ defmodule EctoSearcher.Searcher do
   Module for searching
 
   ## Usage
+  ```elixir
   searhable_fields = [:name, :description]
-  search = %{"name" => %{"eq" => "Donald Trump"}, "description" => %{"cont" => "My president"}}
+  search = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
   query = EctoSearcher.Searcher.search(MyMegaModel, search, searchable_fields)
   MySuperApp.Repo.all(query)
+  ```
   """
 
   require Ecto.Query
   alias Ecto.Query
-  alias EctoSearcher.Searcher.{Field, Value, Condition}
+  alias EctoSearcher.Searcher.{Field, Value, Condition, SearchQuery}
 
+  @doc """
+  Shortcut for `search/5`
+
+  Takes `schema` as `base_query` and optional `mapping` (defaults to `EctoSearcher.DefaultMapping`).
+  """
   def search(
         schema,
         search_params,
         searchable_fields,
-        search_module \\ EctoSearcher.DefaultSearchQueries
+        mapping \\ EctoSearcher.DefaultMapping
       )
-      when is_list(searchable_fields) and is_atom(search_module) do
+      when is_list(searchable_fields) and is_atom(mapping) do
     base_query = Query.from(schema)
-    search(base_query, schema, search_params, searchable_fields, search_module)
+    search(base_query, schema, search_params, searchable_fields, mapping)
   end
 
+  @doc """
+  Builds search query
+
+  Takes `%Ecto.Query{}` as `base_query` and ecto model as `schema`.
+
+  `search_params` should be a map with search_fields in form of `"field_condition"` like this:
+  ```elixir
+    %{
+      "name_eq" => "Donald Trump",
+      "description_cont" => "My president"
+    }
+  ```
+
+  `searchable_fields` should be a list of field names as atoms (looked up from schema or from `mapping.fields`):
+  ```elixir
+  [:name, :description]
+  ```
+
+  `mapping` should implement `EctoSearcher.Mapping` behavior. `EctoSearcher.DefaultMapping` provides some basics.
+  """
   def search(
         base_query = %Ecto.Query{},
         schema,
         search_params,
         searchable_fields,
-        search_module
+        mapping
       )
-      when is_list(searchable_fields) and is_atom(search_module) do
+      when is_list(searchable_fields) and is_atom(mapping) do
     where_conditions =
       build_where_conditions(
         schema,
         search_params,
         searchable_fields,
-        search_module
+        mapping
       )
 
     query = base_query || schema
@@ -49,29 +76,29 @@ defmodule EctoSearcher.Searcher do
     end
   end
 
-  defp build_where_conditions(schema, search_params, searchable_fields, search_module) do
+  defp build_where_conditions(schema, search_params, searchable_fields, mapping)
+       when is_map(search_params) do
     search_params
-    |> searchable_params(searchable_fields)
-    |> Enum.map(fn search_param -> search_field(schema, search_param, search_module) end)
+    |> SearchQuery.from_params(searchable_fields)
+    |> Enum.map(fn search_query -> search_to_ecto_query(search_query, schema, mapping) end)
     |> compose_queries
   end
 
-  defp search_field(schema, {field, conditions}, search_module) when is_map(conditions) do
-    field_name_as_atom = String.to_existing_atom(field)
-    field_query = Field.lookup(field_name_as_atom, search_module)
+  defp build_where_conditions(_, _, _, _), do: []
 
-    conditions
-    |> build_condition_queries(schema, field_query, field_name_as_atom, search_module)
-    |> compose_queries()
-  end
+  defp search_to_ecto_query(search_query, schema, mapping) do
+    field_query = Field.lookup(search_query.field, mapping)
 
-  defp search_field(_, _, _), do: nil
+    casted_value =
+      Value.cast(
+        schema,
+        search_query.field,
+        search_query.value,
+        search_query.condition,
+        mapping
+      )
 
-  defp build_condition_queries(conditions, schema, field, field_name, search_module) do
-    Enum.map(conditions, fn {condition, value} ->
-      casted_value = Value.cast(schema, field_name, value, condition, search_module)
-      Condition.lookup(field, condition, casted_value, search_module)
-    end)
+    Condition.lookup(field_query, search_query.condition, casted_value, mapping)
   end
 
   defp compose_queries(queries) do
@@ -83,11 +110,4 @@ defmodule EctoSearcher.Searcher do
       nil
     end
   end
-
-  defp searchable_params(search_params, searchable_fields) when is_map(search_params) do
-    searchable_field_names = Enum.map(searchable_fields, &to_string/1)
-    Enum.filter(search_params, fn {key, _} -> key in searchable_field_names end)
-  end
-
-  defp searchable_params(_, _), do: %{}
 end

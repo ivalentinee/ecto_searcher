@@ -1,10 +1,10 @@
-defmodule EctoSearcher.DefaultSearchQueries do
-  use EctoSearcher.SearchQueries
+defmodule EctoSearcher.DefaultMapping do
+  use EctoSearcher.Mapping
   require Ecto.Query
   alias Ecto.Query
 
   @moduledoc """
-  Contains default queries.
+  Contains default condition mapping.
 
   ## Conditions
   - `eq` — equality (`field == value`)
@@ -15,9 +15,6 @@ defmodule EctoSearcher.DefaultSearchQueries do
   - `lt` — less than (`field < value`)
   - `lteq` — less than or equal (`field <= value`)
   - `overlaps` — arrays overlap (`field && value`)
-
-  ## Aggregate types
-  - `in` — array
   """
 
   def conditions do

@@ -3,9 +3,11 @@ defmodule EctoSearcher.Sorter do
   Module for sorting
 
   ## Usage
+  ```elixir
   sortable_fields = [:name, :description]
   sorted_query = EctoSearcher.Sorter.sort(SomeEctoModel, %{"field" => "name", "order" => "desc"}, sortable_fields)
   MySuperApp.Repo.all(sorted_query)
+  ```
   """
 
   @allowed_order_values ["asc", "desc"]

@@ -1,11 +1,8 @@
 defmodule EctoSearcher.Searcher.Condition do
   @moduledoc nil
 
-  require Ecto.Query
-  alias Ecto.Query
-
-  def lookup(field, condition_name, value, search_module) do
-    conditions = search_module.conditions
+  def lookup(field, condition_name, value, mapping) do
+    conditions = mapping.conditions
 
     if is_map(conditions) do
       condition = conditions[condition_name]

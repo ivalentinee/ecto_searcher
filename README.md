@@ -39,7 +39,7 @@ Basic usage:
 defmodule TotallyNotAPhoenixController do
   def not_some_controller_method() do
     searhable_fields = [:name, :description]
-    search = %{"name" => %{"eq" => "Donald Trump"}, "description" => %{"cont" => "My president"}}
+    search = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
     query = EctoSearcher.Searcher.search(MyMegaModel, search, searchable_fields)
     MySuperApp.Repo.all(query)
   end
@@ -62,4 +62,4 @@ end
 ```
 
 ## Explanation
-Just look the code.
+Just look the code. Or usage. Or both.

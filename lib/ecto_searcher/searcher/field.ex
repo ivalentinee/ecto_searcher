@@ -4,8 +4,8 @@ defmodule EctoSearcher.Searcher.Field do
   require Ecto.Query
   alias Ecto.Query
 
-  def lookup(field_name, search_module) do
-    fields = search_module.fields
+  def lookup(field_name, mapping) do
+    fields = mapping.fields
 
     if is_map(fields) && fields[field_name] do
       field = fields[field_name]
