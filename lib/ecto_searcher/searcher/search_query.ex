@@ -42,7 +42,9 @@ defmodule EctoSearcher.Searcher.SearchQuery do
   # => EctoSearcher.Searcher.SearchQuery(field: :name, condition: "eq", value: "Donald Trump")
   ```
   """
-  def build(_search_expression = {search_key, value}, searchable_fields) do
+  def build(search_expression, searchable_fields)
+
+  def build({search_key, value}, searchable_fields) do
     case field_and_condition(search_key, searchable_fields) do
       {field, condition} -> %__MODULE__{field: field, condition: condition, value: value}
       _ -> nil
