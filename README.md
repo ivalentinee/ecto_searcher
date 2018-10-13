@@ -17,7 +17,7 @@ Add `ecto_searcher` from github to your mix.ex deps:
 ```elixir
 def deps do
   [
-    {:ecto_searcher, github: "vemperor/ecto_searcher"}
+    {:ecto_searcher, "0.1.0"}
   ]
 end
 ```
