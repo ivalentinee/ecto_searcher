@@ -1,4 +1,4 @@
-defmodule EctoSearcher.Searcher.SearchQuery do
+defmodule EctoSearcher.Searcher.Utils.SearchQuery do
   @moduledoc """
   Builds SearchQuery from params
 
@@ -9,7 +9,7 @@ defmodule EctoSearcher.Searcher.SearchQuery do
   defstruct [:field, :condition, :value]
 
   @doc """
-  Builds SearchQuery from params
+  Builds `%SearchQuery{}` from params
 
   ## Usage
   ```elixir
@@ -32,7 +32,7 @@ defmodule EctoSearcher.Searcher.SearchQuery do
   end
 
   @doc """
-  Builds SearchQuery from search expression.
+  Builds `%SearchQuery{}` from search expression.
 
   ## Usage
   ```elixir

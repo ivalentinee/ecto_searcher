@@ -1,5 +1,5 @@
-defmodule EctoSearcher.Searcher.Value do
-  @moduledoc nil
+defmodule EctoSearcher.Searcher.Utils.Value do
+  @moduledoc false
 
   alias Ecto.Type
 

@@ -1,7 +1,7 @@
-defmodule EctoSearcher.Searcher.SearchQueryTest do
+defmodule EctoSearcher.Searcher.Utils.SearchQueryTest do
   use ExUnit.Case
 
-  alias EctoSearcher.Searcher.SearchQuery
+  alias EctoSearcher.Searcher.Utils.SearchQuery
 
   test "builds search query from expression" do
     field = :some_field

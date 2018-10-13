@@ -1,13 +1,13 @@
-defmodule EctoSearcher.Mapping do
+defmodule EctoSearcher.Searcher.Mapping do
   @moduledoc """
   Behaviour for search query, condition and field mappings
 
   ## Usage
-  Either adopt `EctoSearcher.Mapping` behaviour and implement callbacks or `use EctoSearcher.Mapping`, which provides defaults.
+  Either adopt `EctoSearcher.Searcher.Mapping` behaviour and implement callbacks or `use EctoSearcher.Searcher.Mapping`, which provides defaults.
 
   ```elixir
   defmodule CustomMapping do
-    use EctoSearcher.Mapping
+    use EctoSearcher.Searcher.Mapping
     require Ecto.Query
     alias Ecto.Query
 
@@ -55,7 +55,7 @@ defmodule EctoSearcher.Mapping do
   }
   ```
 
-  Field name will be matched as search field prefix (by `searchable_fields`).
+  Field name will be matched as search field prefix (from `searchable_fields`).
 
   Values should either be a `Ecto.Query.DynamicExpr` or a map with `Ecto.Query.DynamicExpr` as `:query` and value type type as `:type`.
   """
@@ -63,15 +63,15 @@ defmodule EctoSearcher.Mapping do
 
   defmacro __using__(_) do
     quote do
-      @behaviour EctoSearcher.Mapping
+      @behaviour EctoSearcher.Searcher.Mapping
 
       @doc """
-      Callback implementation for `EctoSearcher.Mapping.conditions/0`
+      Callback implementation for `EctoSearcher.Searcher.Mapping.conditions/0`
       """
       def conditions, do: %{}
 
       @doc """
-      Callback implementation for `EctoSearcher.Mapping.fields/0`
+      Callback implementation for `EctoSearcher.Searcher.Mapping.fields/0`
       """
       def fields, do: %{}
 

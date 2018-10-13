@@ -1,5 +1,5 @@
-defmodule EctoSearcher.Searcher.Field do
-  @moduledoc nil
+defmodule EctoSearcher.Searcher.Utils.Field do
+  @moduledoc false
 
   require Ecto.Query
   alias Ecto.Query

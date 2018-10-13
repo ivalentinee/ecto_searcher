@@ -6,9 +6,9 @@ defmodule EctoSearcher do
 
   - `EctoSearcher.Sorter` — use this to sort
 
-  - `EctoSearcher.Mapping` — use this to implement custom searches
+  - `EctoSearcher.Searcher.Mapping` — use this to implement custom searches
 
-  - `EctoSearcher.DefaultMapping` — use this if you don't want to implement custom mapping
+  - `EctoSearcher.Searcher.DefaultMapping` — use this if you don't want to implement custom mapping
 
   ## Usage
   Model:
@@ -35,7 +35,7 @@ defmodule EctoSearcher do
   Advanced usage:
   ```elixir
   defmodule MySuperApp.CustomMapping do
-    use EctoSearcher.Mapping
+    use EctoSearcher.Searcher.Mapping
 
     def conditions do
       custom_conditions = %{
@@ -44,7 +44,7 @@ defmodule EctoSearcher do
 
       Map.merge(
         custom_conditions,
-        EctoSearcher.DefaultMapping.conditions()
+        EctoSearcher.Searcher.DefaultMapping.conditions()
       )
     end
 

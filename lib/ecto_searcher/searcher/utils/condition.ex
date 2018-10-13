@@ -1,5 +1,5 @@
-defmodule EctoSearcher.Searcher.Condition do
-  @moduledoc nil
+defmodule EctoSearcher.Searcher.Utils.Condition do
+  @moduledoc false
 
   def lookup(field, condition_name, value, mapping) do
     conditions = mapping.conditions

@@ -49,7 +49,7 @@ end
 Advanced usage:
 ```elixir
 defmodule MySuperApp.CustomMapping do
-  use EctoSearcher.Mapping
+  use EctoSearcher.Searcher.Mapping
 
   def conditions do
     custom_conditions = %{
@@ -58,7 +58,7 @@ defmodule MySuperApp.CustomMapping do
 
     Map.merge(
       custom_conditions,
-      EctoSearcher.DefaultMapping.conditions()
+      EctoSearcher.Searcher.DefaultMapping.conditions()
     )
   end
 
