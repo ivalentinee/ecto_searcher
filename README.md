@@ -47,39 +47,7 @@ end
 ```
 
 Advanced usage:
-```elixir
-defmodule MySuperApp.CustomSearches do
-  use EctoSearcher.Conditions
-
-  # You can define custom queries, value types and conditions here! Wow! So impressive!
-  def query(:datetime_as_date) do
-    Query.dynamic([q], fragment("?::date", q.datetime))
-  end
-
-  def value_type(:datetime_as_date), do: :date
-
-  def condition(field, {"not_eq", value}) do
-    Query.dynamic([q], ^field != ^value)
-  end
-end
-
-defmodule TotallyNotAPhoenixContext do
-  import Ecto.Query
-  require Ecto.Query
-
-  def not_some_context_method() do
-    searhable_fields = [:name, :datetime_as_date, :description]
-    search = %{
-      "name" => %{"eq" => "Donald Trump"},
-      "datetime_as_date" => %{"gteq" => "2016-11-08", "lteq" => "2018-08-28"},
-      "description" => %{"not_eq" => "Not my president"}
-    }
-    base_query = from(q in MyMegaModel, where: [q.id < 1984])
-    query = EctoSearcher.Searcher.search(base_query, MyMegaModel, search, searchable_fields, MySuperApp.CustomSearches)
-    MySuperApp.Repo.all(query)
-  end
-end
-```
+**TBD**
 
 ### Sorting
 ```elixir

@@ -1,13 +1,25 @@
 defmodule TestCustomSearch do
-  use EctoSearcher.Conditions
+  use EctoSearcher.SearchQueries
+  require Ecto.Query
+  alias Ecto.Query
 
-  def query(:datetime_field_as_date) do
-    Query.dynamic([q], fragment("?::date", q.custom_field))
+  def conditions do
+    custom_conditions = %{
+      "not_eq" => fn field, value -> Query.dynamic([q], ^field != ^value) end
+    }
+
+    Map.merge(
+      custom_conditions,
+      EctoSearcher.DefaultSearchQueries.conditions()
+    )
   end
 
-  def value_type(:datetime_field_as_date), do: :date
-
-  def condition(field, "not_eq", value) do
-    Query.dynamic([q], ^field != ^value)
+  def fields do
+    %{
+      datetime_field_as_date: %{
+        query: Query.dynamic([q], fragment("?::date", q.custom_field)),
+        type: :date
+      }
+    }
   end
 end
