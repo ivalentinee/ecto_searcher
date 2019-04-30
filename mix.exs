@@ -17,14 +17,14 @@ defmodule EctoSearcher.MixProject do
   def package do
     [
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/vemperor/ecto_searcher"}
+      links: %{"GitHub" => "https://github.com/ivalentinee/ecto_searcher"}
     ]
   end
 
   defp docs do
     [
       main: "EctoSearcher",
-      source_url: "https://github.com/vemperor/ecto_searcher"
+      source_url: "https://github.com/ivalentinee/ecto_searcher"
     ]
   end
 
