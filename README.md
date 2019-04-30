@@ -1,6 +1,6 @@
 # Ecto Searcher
 
-[![Build Status](https://travis-ci.org/vemperor/ecto_searcher.svg?branch=master)](https://travis-ci.org/vemperor/ecto_searcher)
+[![Build Status](https://travis-ci.org/ivalentinee/ecto_searcher.svg?branch=master)](https://travis-ci.org/ivalentinee/ecto_searcher)
 
 EctoSearcher is an attempt to bring dynamicly built queries (hello [Ransack](https://github.com/activerecord-hackery/ransack)) to the world of [Ecto](https://github.com/elixir-ecto/ecto).
 
@@ -17,7 +17,7 @@ Add `ecto_searcher` from github to your mix.ex deps:
 ```elixir
 def deps do
   [
-    {:ecto_searcher, "0.1.0"}
+    {:ecto_searcher, "0.1.1"}
   ]
 end
 ```

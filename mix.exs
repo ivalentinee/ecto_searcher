@@ -4,7 +4,7 @@ defmodule EctoSearcher.MixProject do
   def project do
     [
       app: :ecto_searcher,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       description: "Totally not an attempt to build Ransack-like search",
@@ -17,14 +17,14 @@ defmodule EctoSearcher.MixProject do
   def package do
     [
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/vemperor/ecto_searcher"}
+      links: %{"GitHub" => "https://github.com/ivalentinee/ecto_searcher"}
     ]
   end
 
   defp docs do
     [
       main: "EctoSearcher",
-      source_url: "https://github.com/vemperor/ecto_searcher"
+      source_url: "https://github.com/ivalentinee/ecto_searcher"
     ]
   end
 
