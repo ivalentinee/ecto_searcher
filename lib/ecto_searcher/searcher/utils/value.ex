@@ -46,7 +46,7 @@ defmodule EctoSearcher.Searcher.Utils.Value do
 
     case Type.cast(type, value) do
       {:ok, casted_value} -> casted_value
-      _ -> value
+      _ -> nil
     end
   end
 end

@@ -47,9 +47,13 @@ defmodule EctoSearcher.Searcher.Utils.SearchCondition do
   def build(search_expression, searchable_fields)
 
   def build({search_key, value}, searchable_fields) do
-    case field_and_matcher(search_key, searchable_fields) do
-      {field, matcher} -> %__MODULE__{field: field, matcher: matcher, value: value}
-      _ -> nil
+    if !blank?(value) do
+      case field_and_matcher(search_key, searchable_fields) do
+        {field, matcher} -> %__MODULE__{field: field, matcher: matcher, value: value}
+        _ -> nil
+      end
+    else
+      nil
     end
   end
 
@@ -72,5 +76,9 @@ defmodule EctoSearcher.Searcher.Utils.SearchCondition do
   defp split_into_field_and_matcher(search_key, field) do
     matcher_name = String.replace_leading(search_key, "#{field}_", "")
     {field, matcher_name}
+  end
+
+  defp blank?(value) do
+    is_nil(value) || value == ""
   end
 end

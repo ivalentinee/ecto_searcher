@@ -160,6 +160,26 @@ defmodule EctoSearcher.SearcherTest do
     assert 1 = Enum.count(found_records)
   end
 
+  test "skips blank values" do
+    base_query = Query.from(SampleModel)
+
+    query =
+      Searcher.search(
+        base_query,
+        SampleModel,
+        %{
+          "integer_field_eq" => ""
+        }
+      )
+
+    Factory.create_record(%{"integer_field" => 10})
+    Factory.create_record()
+
+    found_records = TestRepo.all(query)
+
+    assert 2 = Enum.count(found_records)
+  end
+
   test "runs search with custom query, value cast and matcher" do
     base_query = Query.from(SampleModel)
 

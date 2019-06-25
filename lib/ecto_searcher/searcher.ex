@@ -73,7 +73,7 @@ defmodule EctoSearcher.Searcher do
     casted_value = Value.cast(search_condition, schema, mapping)
     match = Matcher.lookup(search_condition.matcher, mapping)
 
-    if match && field_query do
+    if match && field_query && casted_value do
       condition = match.(field_query, casted_value)
       Query.from(q in query, where: ^condition)
     else
