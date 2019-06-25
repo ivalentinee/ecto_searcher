@@ -20,7 +20,9 @@ defmodule EctoSearcher.Searcher.DefaultMapping do
   def matchers do
     %{
       "eq" => fn field, value -> Query.dynamic([q], ^field == ^value) end,
-      "cont" => fn field, value -> Query.dynamic([q], ilike(^field, ^"%#{value}%")) end,
+      "cont" => fn field, value ->
+        Query.dynamic([q], ilike(fragment("?::varchar", ^field), ^"%#{value}%"))
+      end,
       "gt" => fn field, value -> Query.dynamic([q], ^field > ^value) end,
       "lt" => fn field, value -> Query.dynamic([q], ^field < ^value) end,
       "gteq" => fn field, value -> Query.dynamic([q], ^field >= ^value) end,
