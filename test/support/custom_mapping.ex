@@ -17,7 +17,7 @@ defmodule CustomMapping do
   def fields do
     %{
       datetime_field_as_date: %{
-        query: Query.dynamic([q], fragment("?::date", q.custom_field)),
+        query: Query.dynamic([q], fragment("?::date", q.datetime_field)),
         type: :date
       }
     }

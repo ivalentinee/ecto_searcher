@@ -72,32 +72,22 @@ defmodule EctoSearcher.Searcher do
         mapping
       )
       when is_list(searchable_fields) and is_atom(mapping) do
-    where_conditions =
-      build_where_conditions(
-        schema,
-        search_params,
-        searchable_fields,
-        mapping
-      )
+    if is_map(search_params) do
+      search_params
+      |> SearchQuery.from_params(searchable_fields)
+      |> Enum.reduce(base_query, fn search_query, query_with_conditions ->
+        ecto_query = search_to_ecto_query(search_query, schema, mapping)
 
-    query = base_query || schema
-
-    if is_nil(where_conditions) do
-      query
+        if ecto_query do
+          Query.where(query_with_conditions, ^ecto_query)
+        else
+          query_with_conditions
+        end
+      end)
     else
-      Query.from(query, where: ^where_conditions)
+      base_query
     end
   end
-
-  defp build_where_conditions(schema, search_params, searchable_fields, mapping)
-       when is_map(search_params) do
-    search_params
-    |> SearchQuery.from_params(searchable_fields)
-    |> Enum.map(fn search_query -> search_to_ecto_query(search_query, schema, mapping) end)
-    |> compose_queries
-  end
-
-  defp build_where_conditions(_, _, _, _), do: []
 
   defp search_to_ecto_query(search_query, schema, mapping) do
     field_query = Field.lookup(search_query.field, mapping)
@@ -112,15 +102,5 @@ defmodule EctoSearcher.Searcher do
       )
 
     Condition.lookup(field_query, search_query.condition, casted_value, mapping)
-  end
-
-  defp compose_queries(queries) do
-    if Enum.any?(queries) do
-      queries
-      |> Enum.reject(&is_nil/1)
-      |> Enum.reduce(fn query, composition -> Query.dynamic(^composition and ^query) end)
-    else
-      nil
-    end
   end
 end

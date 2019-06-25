@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:10.4
+    ports:
+      - "5432:5432"
+
+  app:
+    image: elixir:1.8.0-slim
+    volumes:
+      - ./:/app
+    working_dir: /app
+    links:
+      - db
+    environment:
+      MIX_ENV: "test"

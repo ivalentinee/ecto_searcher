@@ -11,13 +11,13 @@ defmodule EctoSearcher.SorterTest do
   test "builds asc sort query" do
     query =
       Sorter.sort(
-        TestSchema,
-        %{"field" => "test_field_one", "order" => "asc"}
+        SampleModel,
+        %{"field" => "column_one", "order" => "asc"}
       )
 
     expected_query =
-      Query.from(t in TestSchema,
-        order_by: [fragment("? ?", ^Query.dynamic([q], q.test_field_one), ^"asc")]
+      Query.from(t in SampleModel,
+        order_by: [fragment("? ?", ^Query.dynamic([q], q.column_one), ^"asc")]
       )
 
     assert inspect(expected_query) == inspect(query)
@@ -26,15 +26,15 @@ defmodule EctoSearcher.SorterTest do
   test "builds asc sort query with custom field" do
     query =
       Sorter.sort(
-        TestSchema,
-        TestSchema,
+        SampleModel,
+        SampleModel,
         %{"field" => "datetime_field_as_date", "order" => "asc"},
         [:datetime_field_as_date],
         CustomMapping
       )
 
     expected_query =
-      Query.from(t in TestSchema,
+      Query.from(t in SampleModel,
         order_by: [
           fragment("? ?", ^Query.dynamic([q], fragment("?::date", q.custom_field)), ^"asc")
         ]
@@ -46,15 +46,15 @@ defmodule EctoSearcher.SorterTest do
   test "builds desc sort query" do
     query =
       Sorter.sort(
-        TestSchema,
-        TestSchema,
-        %{"field" => "test_field_one", "order" => "desc"},
-        [:test_field_one]
+        SampleModel,
+        SampleModel,
+        %{"field" => "column_one", "order" => "desc"},
+        [:column_one]
       )
 
     expected_query =
-      Query.from(t in TestSchema,
-        order_by: [fragment("? ?", ^Query.dynamic([q], q.test_field_one), ^"desc")]
+      Query.from(t in SampleModel,
+        order_by: [fragment("? ?", ^Query.dynamic([q], q.column_one), ^"desc")]
       )
 
     assert inspect(expected_query) == inspect(query)
@@ -63,13 +63,13 @@ defmodule EctoSearcher.SorterTest do
   test "ignores unpermitted fields" do
     query =
       Sorter.sort(
-        TestSchema,
-        TestSchema,
-        %{"field" => "test_field_one", "order" => "asc"},
-        [:test_field_two]
+        SampleModel,
+        SampleModel,
+        %{"field" => "column_one", "order" => "asc"},
+        [:column_two]
       )
 
-    expected_query = TestSchema
+    expected_query = SampleModel
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -77,13 +77,13 @@ defmodule EctoSearcher.SorterTest do
   test "returns base_query for incorrect search_params" do
     query =
       Sorter.sort(
-        TestSchema,
-        TestSchema,
+        SampleModel,
+        SampleModel,
         "something completely incorrect",
-        [:test_field_two]
+        [:column_two]
       )
 
-    expected_query = TestSchema
+    expected_query = SampleModel
 
     assert inspect(expected_query) == inspect(query)
   end

@@ -31,10 +31,19 @@ defmodule EctoSearcher.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  defp extra_applications(:test), do: [:logger, :postgrex]
+  defp extra_applications(_), do: []
+
+  def application do
+    [extra_applications: extra_applications(Mix.env())]
+  end
+
   defp deps do
     [
-      {:ecto, "~> 2.1"},
-      {:ex_doc, "~> 0.19", only: :dev}
+      {:ecto, "~> 3.0"},
+      {:ex_doc, "~> 0.19", only: :dev},
+      {:ecto_sql, "~> 3.0", only: :test, optional: true},
+      {:postgrex, ">= 0.0.0", only: :test, optional: true}
     ]
   end
 end

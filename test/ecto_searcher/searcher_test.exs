@@ -4,155 +4,182 @@ defmodule EctoSearcher.SearcherTest do
 
   use ExUnit.Case
 
+  alias EctoSearcher.Factory
+  alias EctoSearcher.SampleModel
   alias EctoSearcher.Searcher
+  alias EctoSearcher.TestRepo
   alias Ecto.Query
   require Query
 
-  test "builds query for one field" do
-    query =
-      Searcher.search(
-        TestSchema,
-        %{"test_field_one_eq" => "some value"}
-      )
-
-    expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
-
-    assert inspect(expected_query) == inspect(query)
+  setup do
+    Ecto.Adapters.SQL.Sandbox.checkout(TestRepo)
   end
 
-  test "builds query for multiple conditions for one field" do
+  test "finds records for one field" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
+        %{"column_one_eq" => "some value"}
+      )
+
+    Factory.create_record(%{"column_one" => "some value"})
+    Factory.create_record(%{"column_one" => "some other value"})
+
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
+  end
+
+  test "finds records for multiple conditions for one field" do
+    query =
+      Searcher.search(
+        SampleModel,
         %{
-          "test_field_one_gteq" => "0",
-          "test_field_one_lteq" => "2"
+          "column_one_gteq" => "0",
+          "column_one_lteq" => "2"
         },
-        [:test_field_one]
+        [:column_one]
       )
 
-    expected_query =
-      Query.from(t in TestSchema,
-        where: t.test_field_one >= ^"0" and t.test_field_one <= ^"2"
-      )
+    Factory.create_record(%{"column_one" => "1"})
+    Factory.create_record(%{"column_one" => "2"})
+    Factory.create_record(%{"column_one" => "3"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 2 = Enum.count(found_records)
   end
 
-  test "builds query for multiple fields" do
+  test "finds records for multiple fields" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
         %{
-          "test_field_one_eq" => "some value",
-          "test_field_two_eq" => "some other value"
+          "column_one_eq" => "some value",
+          "column_two_eq" => "some other value"
         },
-        [:test_field_one, :test_field_two]
+        [:column_one, :column_two]
       )
 
-    expected_query =
-      Query.from(t in TestSchema,
-        where: t.test_field_one == ^"some value" and t.test_field_two == ^"some other value"
-      )
+    Factory.create_record(%{"column_one" => "some value"})
+    Factory.create_record(%{"column_two" => "some other value"})
+    Factory.create_record(%{"column_one" => "some value", "column_two" => "some other value"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
   end
 
-  test "builds query with value interpolation" do
+  test "finds records with ilike" do
     query =
       Searcher.search(
-        TestSchema,
-        %{"test_field_one_cont" => 12345},
-        [:test_field_one]
+        SampleModel,
+        %{"column_one_cont" => "12345"},
+        [:column_one]
       )
 
-    expected_query = Query.from(t in TestSchema, where: ilike(t.test_field_one, ^"%12345%"))
+    Factory.create_record(%{"column_one" => "234"})
+    Factory.create_record(%{"column_two" => "15"})
+    Factory.create_record(%{"column_one" => "0123456"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
   end
 
   test "ignores unpermitted fields" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
         %{
-          "test_field_one_eq" => "some value",
-          "test_field_two_eq" => "some other value"
+          "column_one_eq" => "some value",
+          "column_two_eq" => "some other value"
         },
-        [:test_field_one]
+        [:column_one]
       )
 
-    expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
+    Factory.create_record(%{"column_one" => "some value"})
+    Factory.create_record(%{"column_two" => "some other value"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
   end
 
-  test "returns base_query for incorrect search_params" do
+  test "returns all records for incorrect search_params" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
         "something completely incorrect",
-        [:test_field_one]
+        [:column_one]
       )
 
-    expected_query = Query.from(TestSchema)
+    Factory.create_record(%{"column_one" => "some value"})
+    Factory.create_record(%{"column_two" => "some other value"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 2 = Enum.count(found_records)
   end
 
   test "ignores unknown conditions" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
         %{
-          "test_field_one_eq" => "some value",
-          "test_field_two_unknown_condition" => "some other value"
+          "column_one_eq" => "some value",
+          "column_two_unknown_condition" => "some other value"
         },
-        [:test_field_one, :test_field_two]
+        [:column_one, :column_two]
       )
 
-    expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
+    Factory.create_record(%{"column_one" => "some value"})
+    Factory.create_record(%{"column_two" => "some other value"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
   end
 
   test "runs search with custom query, value cast and condition" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
         %{
-          "test_field_one_not_eq" => "some value",
+          "column_one_not_eq" => "some value",
           "datetime_field_as_date_eq" => "2018-08-28"
         },
-        [:test_field_one, :datetime_field_as_date],
+        [:column_one, :datetime_field_as_date],
         CustomMapping
       )
 
-    expected_query =
-      Query.from(t in TestSchema,
-        where:
-          fragment("?::date", t.custom_field) == ^~D[2018-08-28] and
-            t.test_field_one != ^"some value"
-      )
+    Factory.create_record(%{
+      "column_one" => "some other value",
+      "datetime_field" => ~N[2018-08-28 12:13:14]
+    })
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
   end
 
   test "runs search for aggregated condition" do
     query =
       Searcher.search(
-        TestSchema,
+        SampleModel,
         %{
           "integer_field_in" => ["0", "1", "2", "3"]
         },
         [:integer_field]
       )
 
-    field = Query.dynamic([q], field(q, :integer_field))
-    value = Query.dynamic([q], ^[0, 1, 2, 3])
-    where_condition = Query.dynamic([q], ^field in ^value)
-    expected_query = Query.from(t in TestSchema, where: ^where_condition)
+    Factory.create_record(%{"integer_field" => 1})
+    Factory.create_record(%{"integer_field" => 2})
+    Factory.create_record(%{"integer_field" => 4})
+    Factory.create_record(%{"integer_field" => 5})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 2 = Enum.count(found_records)
   end
 end
