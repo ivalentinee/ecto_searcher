@@ -7,7 +7,7 @@ if Mix.env() == :test do
     username: "postgres",
     password: "postgres",
     database: "db",
-    hostname: "db",
+    hostname: System.get_env("DB_HOST") || "localhost",
     pool: Ecto.Adapters.SQL.Sandbox,
     pool_size: 10
 end

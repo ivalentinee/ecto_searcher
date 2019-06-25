@@ -10,7 +10,14 @@ defmodule EctoSearcher.MixProject do
       description: "Totally not an attempt to build Ransack-like search",
       package: package(),
       docs: docs(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -40,10 +47,12 @@ defmodule EctoSearcher.MixProject do
 
   defp deps do
     [
-      {:ecto, github: "elixir-ecto/ecto"}, # waiting for ecto 3.2
+      # waiting for ecto 3.2
+      {:ecto, github: "elixir-ecto/ecto"},
       {:ex_doc, "~> 0.19", only: :dev},
       {:ecto_sql, github: "elixir-ecto/ecto_sql", only: :test, optional: true},
-      {:postgrex, ">= 0.0.0", only: :test, optional: true}
+      {:postgrex, ">= 0.0.0", only: :test, optional: true},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 end

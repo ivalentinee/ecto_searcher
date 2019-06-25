@@ -1,6 +1,7 @@
 # Ecto Searcher
 
 [![Build Status](https://travis-ci.org/ivalentinee/ecto_searcher.svg?branch=master)](https://travis-ci.org/ivalentinee/ecto_searcher)
+[![Coverage Status](https://coveralls.io/repos/github/ivalentinee/ecto_searcher/badge.svg?branch=master)](https://coveralls.io/github/ivalentinee/ecto_searcher?branch=master)
 
 EctoSearcher is an attempt to bring dynamicly built queries (hello [Ransack](https://github.com/activerecord-hackery/ransack)) to the world of [Ecto](https://github.com/elixir-ecto/ecto).
 

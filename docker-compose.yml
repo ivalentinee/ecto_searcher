@@ -15,3 +15,4 @@ services:
       - db
     environment:
       MIX_ENV: "test"
+      DB_HOST: "db"

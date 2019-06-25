@@ -26,7 +26,8 @@ defmodule EctoSearcher.Searcher do
   @doc """
   Shortcut for `search/5`
   """
-  def search(base_query, schema, search_params, searchable_fields) when is_list(searchable_fields) do
+  def search(base_query, schema, search_params, searchable_fields)
+      when is_list(searchable_fields) do
     mapping = DefaultMapping
     search(base_query, schema, search_params, mapping, searchable_fields)
   end

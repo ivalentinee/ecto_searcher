@@ -1,18 +1,19 @@
-env:
-  DOCKER_COMPOSE_VERSION: 1.22.0
+language: elixir
+elixir: '1.8.0'
 
 services:
-  - docker
+  - postgresql
 
-before_install:
-  - sudo service postgresql stop
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
+env:
+  - MIX_ENV: test
 
 install:
-  - docker-compose pull
+  - mix local.hex --force
+  - mix deps.get
+  - mix local.rebar --force
+  - mix ecto.create
+  - mix ecto.migrate
 
 script:
-  - docker-compose run --rm app bash -c "mix local.hex --force && mix deps.get && mix local.rebar --force && mix ecto.create && mix ecto.migrate && mix test && mix format --check-formatted"
+  - mix format --check-formatted
+  - mix coveralls.travis
