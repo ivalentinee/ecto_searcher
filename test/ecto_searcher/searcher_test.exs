@@ -110,8 +110,7 @@ defmodule EctoSearcher.SearcherTest do
     query =
       Searcher.search(
         SampleModel,
-        "something completely incorrect",
-        [:column_one]
+        "something completely incorrect"
       )
 
     Factory.create_record(%{"column_one" => "some value"})
@@ -129,8 +128,7 @@ defmodule EctoSearcher.SearcherTest do
         %{
           "column_one_eq" => "some value",
           "column_two_unknown_matcher" => "some other value"
-        },
-        [:column_one, :column_two]
+        }
       )
 
     Factory.create_record(%{"column_one" => "some value"})
@@ -149,7 +147,6 @@ defmodule EctoSearcher.SearcherTest do
           "column_one_not_eq" => "some value",
           "datetime_field_as_date_eq" => "2018-08-28"
         },
-        [:column_one, :datetime_field_as_date],
         CustomMapping
       )
 
@@ -169,8 +166,7 @@ defmodule EctoSearcher.SearcherTest do
         SampleModel,
         %{
           "integer_field_in" => ["0", "1", "2", "3"]
-        },
-        [:integer_field]
+        }
       )
 
     Factory.create_record(%{"integer_field" => 1})

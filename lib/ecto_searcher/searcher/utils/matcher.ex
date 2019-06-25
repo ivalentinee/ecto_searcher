@@ -1,7 +1,7 @@
 defmodule EctoSearcher.Searcher.Utils.Matcher do
   @moduledoc false
 
-  def lookup(field, matcher_name, value, mapping) do
+  def lookup(field, matcher_name, mapping) do
     matchers = mapping.matchers
 
     if is_map(matchers) do
@@ -10,11 +10,11 @@ defmodule EctoSearcher.Searcher.Utils.Matcher do
       matcher_query =
         case matcher do
           %{query: query} -> query
-          anythong_else -> anythong_else
+          anything_else -> anything_else
         end
 
       if is_function(matcher_query, 2) do
-        matcher_query.(field, value)
+        matcher_query
       end
     end
   end

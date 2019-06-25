@@ -4,9 +4,8 @@ defmodule EctoSearcher.Searcher do
 
   ## Usage
   ```elixir
-  searchable_fields = [:name, :description]
   search = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
-  query = EctoSearcher.Searcher.search(MyMegaModel, search, searchable_fields)
+  query = EctoSearcher.Searcher.search(MyMegaModel, search)
   MySuperApp.Repo.all(query)
   ```
   """
@@ -23,25 +22,29 @@ defmodule EctoSearcher.Searcher do
   """
   def search(schema, search_params) do
     base_query = Query.from(schema)
-    searchable_fields = schema.__schema__(:fields)
     mapping = DefaultMapping
-    search(base_query, schema, search_params, searchable_fields, mapping)
+    search(base_query, schema, search_params, mapping)
   end
 
   @doc """
   Shortcut for `search/5`
 
-  Takes `schema` as `base_query` and optional `mapping` (defaults to `EctoSearcher.Searcher.DefaultMapping`).
+  Takes `schema` as `base_query`.
   """
-  def search(
-        schema,
-        search_params,
-        searchable_fields,
-        mapping \\ DefaultMapping
-      )
-      when is_list(searchable_fields) and is_atom(mapping) do
+  def search(schema, search_params, mapping) when is_atom(mapping) do
     base_query = Query.from(schema)
-    search(base_query, schema, search_params, searchable_fields, mapping)
+    search(base_query, schema, search_params, mapping)
+  end
+
+  @doc """
+  Shortcut for `search/5`
+
+  Takes `schema` as `base_query`.
+  """
+  def search(schema, search_params, searchable_fields) when is_list(searchable_fields) do
+    base_query = Query.from(schema)
+    mapping = DefaultMapping
+    search(base_query, schema, search_params, mapping, searchable_fields)
   end
 
   @doc """
@@ -57,29 +60,25 @@ defmodule EctoSearcher.Searcher do
     }
   ```
 
-  `searchable_fields` should be a list of field names as atoms (looked up from schema or from `mapping.fields`):
-  ```elixir
-  [:name, :description]
-  ```
-
   `mapping` should implement `EctoSearcher.Searcher.Mapping` behavior. `EctoSearcher.Searcher.DefaultMapping` provides some basics.
   """
-  def search(
-        base_query = %Ecto.Query{},
-        schema,
-        search_params,
-        searchable_fields,
-        mapping
-      )
-      when is_list(searchable_fields) and is_atom(mapping) do
+  def search(base_query = %Ecto.Query{}, schema, search_params, mapping, searchable_fields \\ nil)
+      when is_atom(mapping) do
     if is_map(search_params) do
-      build_query(base_query, schema, search_params, searchable_fields, mapping)
+      build_query(base_query, schema, search_params, mapping, searchable_fields)
     else
       base_query
     end
   end
 
-  defp build_query(base_query, schema, search_params, searchable_fields, mapping) do
+  defp build_query(base_query, schema, search_params, mapping, searchable_fields) do
+    searchable_fields =
+      if searchable_fields do
+        searchable_fields
+      else
+        schema.__schema__(:fields) ++ Map.keys(mapping.fields)
+      end
+
     search_params
     |> SearchQuery.from_params(searchable_fields)
     |> Enum.reduce(base_query, fn search_query, query_with_matchers ->
@@ -95,16 +94,13 @@ defmodule EctoSearcher.Searcher do
 
   defp search_to_ecto_query(search_query, schema, mapping) do
     field_query = Field.lookup(search_query.field, mapping)
+    casted_value = Value.cast(schema, search_query, mapping)
+    matcher = Matcher.lookup(field_query, search_query.matcher, mapping)
 
-    casted_value =
-      Value.cast(
-        schema,
-        search_query.field,
-        search_query.value,
-        search_query.matcher,
-        mapping
-      )
-
-    Matcher.lookup(field_query, search_query.matcher, casted_value, mapping)
+    if matcher do
+      matcher.(field_query, casted_value)
+    else
+      nil
+    end
   end
 end

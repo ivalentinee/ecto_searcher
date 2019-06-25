@@ -24,9 +24,8 @@ defmodule EctoSearcher do
   ```elixir
   defmodule TotallyNotAPhoenixController do
     def not_some_controller_method() do
-      searchable_fields = [:name, :description]
       search = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
-      query = EctoSearcher.Searcher.search(MyMegaModel, search, searchable_fields)
+      query = EctoSearcher.Searcher.search(MyMegaModel, search)
       MySuperApp.Repo.all(query)
     end
   end
