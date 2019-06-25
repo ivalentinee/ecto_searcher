@@ -70,7 +70,7 @@ defmodule EctoSearcher do
         "description_not_eq" => "Not my president"
       }
       base_query = from(q in MyMegaModel, where: [q.id < 1984])
-      query = EctoSearcher.Searcher.search(base_query, MyMegaModel, search, searchable_fields, MySuperApp.CustomMapping)
+      query = EctoSearcher.Searcher.search(base_query, MyMegaModel, search, MySuperApp.CustomMapping, searchable_fields)
       MySuperApp.Repo.all(query)
     end
   end
@@ -116,7 +116,7 @@ defmodule EctoSearcher do
       }
 
       base_query = from(q in MyMegaModel, where: [q.id < 1984])
-      query = EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, sortable_fields, MySuperApp.CustomMapping)
+      query = EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, MySuperApp.CustomMapping, sortable_fields)
       MySuperApp.Repo.all(query)
     end
   end

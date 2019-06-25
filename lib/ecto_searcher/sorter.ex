@@ -21,10 +21,10 @@ defmodule EctoSearcher.Sorter do
   Shortcut for `sort/5`
   """
   def sort(base_query, schema, sort_query) do
-    sortable_fields = schema.__schema__(:fields)
+    sortable_fields = Field.searchable_fields(schema, DefaultMapping)
     mapping = DefaultMapping
 
-    sort(base_query, schema, sort_query, sortable_fields, mapping)
+    sort(base_query, schema, sort_query, mapping, sortable_fields)
   end
 
   @doc """
@@ -40,31 +40,34 @@ defmodule EctoSearcher.Sorter do
     }
   ```
 
-  `sortable_fields` should be a list of field names as atoms (looked up from schema or from `mapping.fields`):
   ```elixir
   [:name, :description]
   ```
 
   `mapping` should implement `EctoSorter.Sorter.Mapping` behavior. `EctoSorter.Sorter.DefaultMapping` provides some basics.
+
+  `searchable_fields` is a list with fields (atoms) permitted for searching.
   """
   def sort(
         base_query,
         schema,
         sort_query,
-        sortable_fields,
-        mapping \\ DefaultMapping
+        mapping,
+        sortable_fields \\ nil
       )
       when is_list(sortable_fields) do
+    sortable_fields = sortable_fields || Field.searchable_fields(schema, mapping)
+
     case sort_query do
       %{"field" => field, "order" => order} ->
-        sorted_query(base_query, field, order, sortable_fields, schema, mapping)
+        sorted_query(base_query, field, order, schema, mapping, sortable_fields)
 
       _ ->
         base_query
     end
   end
 
-  defp sorted_query(base_query, field, order, sortable_fields, schema, mapping) do
+  defp sorted_query(base_query, field, order, schema, mapping, sortable_fields) do
     sortable_field_names = Enum.map(sortable_fields, &to_string/1)
 
     if field in sortable_field_names and order in @allowed_order_values do

@@ -68,7 +68,7 @@ defmodule EctoSearcher.Searcher.Mapping do
       @doc """
       Callback implementation for `EctoSearcher.Searcher.Mapping.matchers/0`
       """
-      def matchers, do: %{}
+      def matchers, do: EctoSearcher.Searcher.DefaultMapping.matchers()
 
       @doc """
       Callback implementation for `EctoSearcher.Searcher.Mapping.fields/0`

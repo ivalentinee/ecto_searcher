@@ -4,6 +4,10 @@ defmodule EctoSearcher.Searcher.Utils.Field do
   require Ecto.Query
   alias Ecto.Query
 
+  def searchable_fields(schema, mapping) do
+    schema.__schema__(:fields) ++ Map.keys(mapping.fields)
+  end
+
   def lookup(field_name, schema, mapping) do
     cond do
       custom_field?(field_name, mapping) -> custom_field_query(field_name, mapping)

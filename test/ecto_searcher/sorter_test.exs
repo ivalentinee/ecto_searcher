@@ -8,6 +8,7 @@ defmodule EctoSearcher.SorterTest do
   alias EctoSearcher.SampleModel
   alias EctoSearcher.Sorter
   alias EctoSearcher.TestRepo
+  alias EctoSearcher.Searcher.DefaultMapping
   alias Ecto.Query
   require Query
 
@@ -44,6 +45,7 @@ defmodule EctoSearcher.SorterTest do
         base_query,
         SampleModel,
         %{"field" => "column_one", "order" => "desc"},
+        DefaultMapping,
         [:column_one]
       )
 
@@ -66,8 +68,8 @@ defmodule EctoSearcher.SorterTest do
         base_query,
         SampleModel,
         %{"field" => "datetime_field_as_date", "order" => "asc"},
-        [:datetime_field_as_date],
-        CustomMapping
+        CustomMapping,
+        [:datetime_field_as_date]
       )
 
     Factory.create_record(%{
@@ -94,6 +96,7 @@ defmodule EctoSearcher.SorterTest do
         base_query,
         SampleModel,
         "something completely incorrect",
+        DefaultMapping,
         [:column_one]
       )
 

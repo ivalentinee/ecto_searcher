@@ -46,6 +46,8 @@ defmodule EctoSearcher.Searcher do
   ```
 
   `mapping` should implement `EctoSearcher.Searcher.Mapping` behavior. `EctoSearcher.Searcher.DefaultMapping` provides some basics.
+
+  `searchable_fields` is a list with fields (atoms) permitted for searching.
   """
   def search(base_query = %Ecto.Query{}, schema, search_params, mapping, searchable_fields \\ nil)
       when is_atom(mapping) do
@@ -57,12 +59,7 @@ defmodule EctoSearcher.Searcher do
   end
 
   defp build_query(base_query, schema, search_params, mapping, searchable_fields) do
-    searchable_fields =
-      if searchable_fields do
-        searchable_fields
-      else
-        schema.__schema__(:fields) ++ Map.keys(mapping.fields)
-      end
+    searchable_fields = searchable_fields || Field.searchable_fields(schema, mapping)
 
     search_params
     |> SearchCondition.from_params(searchable_fields)
