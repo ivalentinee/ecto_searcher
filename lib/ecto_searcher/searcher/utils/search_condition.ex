@@ -1,6 +1,6 @@
-defmodule EctoSearcher.Searcher.Utils.SearchQuery do
+defmodule EctoSearcher.Searcher.Utils.SearchCondition do
   @moduledoc """
-  Builds SearchQuery from params
+  Builds SearchCondition from params
 
   This module is internal. Use at your own risk.
   """
@@ -9,20 +9,22 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
   defstruct [:field, :matcher, :value]
 
   @doc """
-  Builds `%SearchQuery{}` from params
+  Builds `%SearchCondition{}` from params
 
   ## Usage
   ```elixir
   searchable_fields = [:name, :description]
   search_params = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
-  EctoSearcher.Searcher.SearchQuery.from_params(search_params, searchable_fields)
+  EctoSearcher.Searcher.SearchCondition.from_params(search_params, searchable_fields)
   # => [
-  #      EctoSearcher.Searcher.SearchQuery(field: :name, matcher: "eq", value: "Donald Trump"),
-  #      EctoSearcher.Searcher.SearchQuery(field: :description, matcher: "cont", value: "My president"),
+  #      EctoSearcher.Searcher.SearchCondition(field: :name, matcher: "eq", value: "Donald Trump"),
+  #      EctoSearcher.Searcher.SearchCondition(field: :description, matcher: "cont", value: "My president"),
   #    ]
   ```
   """
   def from_params(search_params, searchable_fields) do
+    searchable_fields = Enum.sort_by(searchable_fields, &to_string/1, &>=/2)
+
     Enum.reduce(search_params, [], fn search_param, search_query_list ->
       case build(search_param, searchable_fields) do
         nil -> search_query_list
@@ -32,14 +34,14 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
   end
 
   @doc """
-  Builds `%SearchQuery{}` from search expression.
+  Builds `%SearchCondition{}` from search expression.
 
   ## Usage
   ```elixir
   searchable_fields = [:name, :description]
   search_expression = {"name_eq", "Donald Trump"}
-  EctoSearcher.Searcher.SearchQuery.build(search_expression, searchable_fields)
-  # => EctoSearcher.Searcher.SearchQuery(field: :name, matcher: "eq", value: "Donald Trump")
+  EctoSearcher.Searcher.SearchCondition.build(search_expression, searchable_fields)
+  # => EctoSearcher.Searcher.SearchCondition(field: :name, matcher: "eq", value: "Donald Trump")
   ```
   """
   def build(search_expression, searchable_fields)

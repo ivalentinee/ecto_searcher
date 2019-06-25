@@ -10,6 +10,4 @@ if Mix.env() == :test do
     hostname: "db",
     pool: Ecto.Adapters.SQL.Sandbox,
     pool_size: 10
-
-  config :logger, level: :warn
 end

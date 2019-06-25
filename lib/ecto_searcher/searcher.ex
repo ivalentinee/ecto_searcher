@@ -13,7 +13,7 @@ defmodule EctoSearcher.Searcher do
   require Ecto.Query
   alias Ecto.Query
   alias EctoSearcher.Searcher.DefaultMapping
-  alias EctoSearcher.Searcher.Utils.{Field, Value, Matcher, SearchQuery}
+  alias EctoSearcher.Searcher.Utils.{Field, Value, Matcher, SearchCondition}
 
   @doc """
   Shortcut for `search/5`
@@ -80,27 +80,22 @@ defmodule EctoSearcher.Searcher do
       end
 
     search_params
-    |> SearchQuery.from_params(searchable_fields)
-    |> Enum.reduce(base_query, fn search_query, query_with_matchers ->
-      ecto_query = search_to_ecto_query(search_query, schema, mapping)
-
-      if ecto_query do
-        Query.where(query_with_matchers, ^ecto_query)
-      else
-        query_with_matchers
-      end
+    |> SearchCondition.from_params(searchable_fields)
+    |> Enum.reduce(base_query, fn search_condition, query_with_conditions ->
+      put_condition(query_with_conditions, search_condition, schema, mapping)
     end)
   end
 
-  defp search_to_ecto_query(search_query, schema, mapping) do
-    field_query = Field.lookup(search_query.field, mapping)
-    casted_value = Value.cast(schema, search_query, mapping)
-    matcher = Matcher.lookup(field_query, search_query.matcher, mapping)
+  defp put_condition(query, search_condition, schema, mapping) do
+    field_query = Field.lookup(search_condition.field, schema, mapping)
+    casted_value = Value.cast(search_condition, schema, mapping)
+    match = Matcher.lookup(search_condition.matcher, mapping)
 
-    if matcher do
-      matcher.(field_query, casted_value)
+    if match && field_query do
+      condition = match.(field_query, casted_value)
+      Query.from(q in query, where: ^condition)
     else
-      nil
+      query
     end
   end
 end

@@ -4,22 +4,28 @@ defmodule EctoSearcher.Searcher.Utils.Field do
   require Ecto.Query
   alias Ecto.Query
 
-  def lookup(field_name, mapping) do
-    fields = mapping.fields
-
-    if is_map(fields) && fields[field_name] do
-      field = fields[field_name]
-
-      case field do
-        %{query: query} -> query
-        anything_else -> anything_else
-      end
-    else
-      default_field_query(field_name)
+  def lookup(field_name, schema, mapping) do
+    cond do
+      custom_field?(field_name, mapping) -> custom_field_query(field_name, mapping)
+      schema_field?(field_name, schema) -> schema_field_query(field_name)
+      true -> nil
     end
   end
 
-  defp default_field_query(field_name) do
+  defp custom_field?(field, mapping) do
+    Map.has_key?(mapping.fields, field)
+  end
+
+  defp schema_field?(field, schema) do
+    Enum.member?(schema.__schema__(:fields), field)
+  end
+
+  defp custom_field_query(field_name, mapping) do
+    mapping_entry = mapping.fields[field_name]
+    mapping_entry[:query]
+  end
+
+  defp schema_field_query(field_name) do
     Query.dynamic([q], field(q, ^field_name))
   end
 end

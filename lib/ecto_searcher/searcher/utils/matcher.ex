@@ -1,7 +1,7 @@
 defmodule EctoSearcher.Searcher.Utils.Matcher do
   @moduledoc false
 
-  def lookup(field, matcher_name, mapping) do
+  def lookup(matcher_name, mapping) do
     matchers = mapping.matchers
 
     if is_map(matchers) do

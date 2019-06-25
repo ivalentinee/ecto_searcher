@@ -2,9 +2,9 @@ defmodule EctoSearcher.Searcher.Utils.Value do
   @moduledoc false
 
   alias Ecto.Type
-  alias EctoSearcher.Searcher.Utils.SearchQuery
+  alias EctoSearcher.Searcher.Utils.SearchCondition
 
-  def cast(schema, search_query = %SearchQuery{}, mapping) do
+  def cast(search_query = %SearchCondition{}, schema, mapping) do
     type = field_type(schema, search_query.field, mapping)
     matcher_aggregate_type = matcher_aggregate_type(search_query.matcher, mapping)
     cast_value(search_query.value, type, matcher_aggregate_type)

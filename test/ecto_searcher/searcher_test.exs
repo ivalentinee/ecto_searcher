@@ -155,6 +155,11 @@ defmodule EctoSearcher.SearcherTest do
       "datetime_field" => ~N[2018-08-28 12:13:14]
     })
 
+    Factory.create_record(%{
+      "column_one" => "and another value",
+      "datetime_field" => ~N[2018-08-29 12:13:14]
+    })
+
     found_records = TestRepo.all(query)
 
     assert 1 = Enum.count(found_records)
