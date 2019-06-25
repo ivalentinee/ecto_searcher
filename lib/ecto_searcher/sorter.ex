@@ -55,7 +55,7 @@ defmodule EctoSearcher.Sorter do
         mapping,
         sortable_fields \\ nil
       )
-      when is_list(sortable_fields) do
+      when is_list(sortable_fields) or is_nil(sortable_fields) do
     sortable_fields = sortable_fields || Field.searchable_fields(schema, mapping)
 
     case sort_query do
