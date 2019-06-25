@@ -4,26 +4,56 @@ defmodule EctoSearcher.SorterTest do
 
   use ExUnit.Case
 
+  alias EctoSearcher.Factory
+  alias EctoSearcher.SampleModel
   alias EctoSearcher.Sorter
+  alias EctoSearcher.TestRepo
   alias Ecto.Query
   require Query
 
-  test "builds asc sort query" do
+  setup do
+    Ecto.Adapters.SQL.Sandbox.checkout(TestRepo)
+  end
+
+  test "sorts asc" do
     query =
       Sorter.sort(
         SampleModel,
         %{"field" => "column_one", "order" => "asc"}
       )
 
-    expected_query =
-      Query.from(t in SampleModel,
-        order_by: [fragment("? ?", ^Query.dynamic([q], q.column_one), ^"asc")]
-      )
+    {:ok, record_1} = Factory.create_record(%{"column_one" => "5"})
+    {:ok, record_2} = Factory.create_record(%{"column_one" => "2"})
+    {:ok, _record_3} = Factory.create_record(%{"column_one" => "4"})
+    {:ok, _record_4} = Factory.create_record(%{"column_one" => "3"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert record_2.id == List.first(found_records).id
+    assert record_1.id == List.last(found_records).id
   end
 
-  test "builds asc sort query with custom field" do
+  test "sorts desc" do
+    query =
+      Sorter.sort(
+        SampleModel,
+        SampleModel,
+        %{"field" => "column_one", "order" => "desc"},
+        [:column_one]
+      )
+
+    {:ok, record_1} = Factory.create_record(%{"column_one" => "5"})
+    {:ok, record_2} = Factory.create_record(%{"column_one" => "2"})
+    {:ok, _record_3} = Factory.create_record(%{"column_one" => "4"})
+    {:ok, _record_4} = Factory.create_record(%{"column_one" => "3"})
+
+    found_records = TestRepo.all(query)
+
+    assert record_1.id == List.first(found_records).id
+    assert record_2.id == List.last(found_records).id
+  end
+
+  test "sorts with custom field" do
     query =
       Sorter.sort(
         SampleModel,
@@ -33,58 +63,36 @@ defmodule EctoSearcher.SorterTest do
         CustomMapping
       )
 
-    expected_query =
-      Query.from(t in SampleModel,
-        order_by: [
-          fragment("? ?", ^Query.dynamic([q], fragment("?::date", q.custom_field)), ^"asc")
-        ]
-      )
+    Factory.create_record(%{
+      "column_one" => "some other value",
+      "datetime_field" => ~N[2018-08-28 12:13:14]
+    })
 
-    assert inspect(expected_query) == inspect(query)
+    {:ok, record_1} = Factory.create_record(%{"datetime_field" => ~N[2018-08-30 12:13:14]})
+    {:ok, record_2} = Factory.create_record(%{"datetime_field" => ~N[2018-08-20 12:13:14]})
+    {:ok, _record_3} = Factory.create_record(%{"datetime_field" => ~N[2018-08-25 12:13:14]})
+    {:ok, _record_4} = Factory.create_record(%{"datetime_field" => ~N[2018-08-23 12:13:14]})
+
+    found_records = TestRepo.all(query)
+
+    assert record_2.id == List.first(found_records).id
+    assert record_1.id == List.last(found_records).id
   end
 
-  test "builds desc sort query" do
-    query =
-      Sorter.sort(
-        SampleModel,
-        SampleModel,
-        %{"field" => "column_one", "order" => "desc"},
-        [:column_one]
-      )
-
-    expected_query =
-      Query.from(t in SampleModel,
-        order_by: [fragment("? ?", ^Query.dynamic([q], q.column_one), ^"desc")]
-      )
-
-    assert inspect(expected_query) == inspect(query)
-  end
-
-  test "ignores unpermitted fields" do
-    query =
-      Sorter.sort(
-        SampleModel,
-        SampleModel,
-        %{"field" => "column_one", "order" => "asc"},
-        [:column_two]
-      )
-
-    expected_query = SampleModel
-
-    assert inspect(expected_query) == inspect(query)
-  end
-
-  test "returns base_query for incorrect search_params" do
+  test "returns unsorted records for incorrect sort_params" do
     query =
       Sorter.sort(
         SampleModel,
         SampleModel,
         "something completely incorrect",
-        [:column_two]
+        [:column_one]
       )
 
-    expected_query = SampleModel
+    Factory.create_record(%{"column_one" => "2"})
+    Factory.create_record(%{"column_one" => "1"})
 
-    assert inspect(expected_query) == inspect(query)
+    found_records = TestRepo.all(query)
+
+    assert 2 = Enum.count(found_records)
   end
 end
