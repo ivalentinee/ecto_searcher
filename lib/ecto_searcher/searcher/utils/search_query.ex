@@ -13,7 +13,7 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
 
   ## Usage
   ```elixir
-  searhable_fields = [:name, :description]
+  searchable_fields = [:name, :description]
   search_params = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
   EctoSearcher.Searcher.SearchQuery.from_params(search_params, searchable_fields)
   # => [
@@ -36,7 +36,7 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
 
   ## Usage
   ```elixir
-  searhable_fields = [:name, :description]
+  searchable_fields = [:name, :description]
   search_expression = {"name_eq", "Donald Trump"}
   EctoSearcher.Searcher.SearchQuery.build(search_expression, searchable_fields)
   # => EctoSearcher.Searcher.SearchQuery(field: :name, condition: "eq", value: "Donald Trump")

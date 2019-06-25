@@ -38,7 +38,7 @@ Basic usage:
 ```elixir
 defmodule TotallyNotAPhoenixController do
   def not_some_controller_method() do
-    searhable_fields = [:name, :description]
+    searchable_fields = [:name, :description]
     search = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
     query = EctoSearcher.Searcher.search(MyMegaModel, search, searchable_fields)
     MySuperApp.Repo.all(query)
@@ -77,7 +77,7 @@ defmodule TotallyNotAPhoenixContext do
   require Ecto.Query
 
   def not_some_context_method() do
-    searhable_fields = [:name, :datetime_as_date, :description]
+    searchable_fields = [:name, :datetime_as_date, :description]
     search = %{
       "name_eq" => "Donald Trump",
       "datetime_as_date_gteq" => "2016-11-08", "datetime_as_date_lteq" => "2018-08-28",
