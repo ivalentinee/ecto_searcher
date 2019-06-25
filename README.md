@@ -32,8 +32,9 @@ Basic usage:
 ```elixir
 defmodule TotallyNotAPhoenixController do
   def not_some_controller_method() do
+    base_query = Ecto.Query.from(MyMegaModel)
     search = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
-    query = EctoSearcher.Searcher.search(MyMegaModel, search)
+    query = EctoSearcher.Searcher.search(base_query, MyMegaModel, search)
     MySuperApp.Repo.all(query)
   end
 end
@@ -84,12 +85,47 @@ end
 ```
 
 ### Sorting
+Basic usage:
 ```elixir
 defmodule TotallyNotAPhoenixController do
   def not_some_controller_method() do
-    sortable_fields = [:name, :description]
+    base_query = Ecto.Query.from(MyMegaModel)
     sort = %{"field" => "name", "order" => "desc"}
-    query = EctoSearcher.Sorter.sort(MyMegaModel, sort, sortable_fields)
+    query = EctoSearcher.Sorter.sort(base_query, MyMegaModel, sort)
+    MySuperApp.Repo.all(query)
+  end
+end
+```
+
+Advanced usage:
+```elixir
+defmodule MySuperApp.CustomMapping do
+  use EctoSearcher.Searcher.Mapping
+
+  def fields do
+    %{
+      datetime_field_as_date: %{
+        query: Query.dynamic([q], fragment("?::date", q.custom_field)),
+        type: :date
+      }
+    }
+  end
+end
+
+defmodule TotallyNotAPhoenixContext do
+  import Ecto.Query
+  require Ecto.Query
+
+  def not_some_context_method() do
+    sortable_fields = [:name, :datetime_as_date]
+
+    sort = %{
+      "field" => "datetime_as_date_gteq",
+      "order" => "desc"
+    }
+
+    base_query = from(q in MyMegaModel, where: [q.id < 1984])
+    query = EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, sortable_fields, MySuperApp.CustomMapping)
     MySuperApp.Repo.all(query)
   end
 end

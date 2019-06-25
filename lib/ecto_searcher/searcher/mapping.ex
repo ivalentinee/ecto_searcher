@@ -57,7 +57,7 @@ defmodule EctoSearcher.Searcher.Mapping do
 
   Field name will be matched as search field prefix (from `searchable_fields`).
 
-  Values should either be a `Ecto.Query.DynamicExpr` or a map with `Ecto.Query.DynamicExpr` as `:query` and value type type as `:type`.
+  Values should either be a `Ecto.Query.DynamicExpr` or a map with `Ecto.Query.DynamicExpr` as `:query` and value type as `:type`.
   """
   @callback fields() :: Map.t()
 

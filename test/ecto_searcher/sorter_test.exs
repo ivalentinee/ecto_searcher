@@ -16,8 +16,11 @@ defmodule EctoSearcher.SorterTest do
   end
 
   test "sorts asc" do
+    base_query = SampleModel
+
     query =
       Sorter.sort(
+        base_query,
         SampleModel,
         %{"field" => "column_one", "order" => "asc"}
       )
@@ -34,9 +37,11 @@ defmodule EctoSearcher.SorterTest do
   end
 
   test "sorts desc" do
+    base_query = SampleModel
+
     query =
       Sorter.sort(
-        SampleModel,
+        base_query,
         SampleModel,
         %{"field" => "column_one", "order" => "desc"},
         [:column_one]
@@ -54,9 +59,11 @@ defmodule EctoSearcher.SorterTest do
   end
 
   test "sorts with custom field" do
+    base_query = SampleModel
+
     query =
       Sorter.sort(
-        SampleModel,
+        base_query,
         SampleModel,
         %{"field" => "datetime_field_as_date", "order" => "asc"},
         [:datetime_field_as_date],
@@ -80,9 +87,11 @@ defmodule EctoSearcher.SorterTest do
   end
 
   test "returns unsorted records for incorrect sort_params" do
+    base_query = SampleModel
+
     query =
       Sorter.sort(
-        SampleModel,
+        base_query,
         SampleModel,
         "something completely incorrect",
         [:column_one]

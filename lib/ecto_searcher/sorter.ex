@@ -17,8 +17,10 @@ defmodule EctoSearcher.Sorter do
   alias EctoSearcher.Searcher.DefaultMapping
   alias EctoSearcher.Searcher.Utils.Field
 
-  def sort(schema, sort_query) do
-    base_query = schema
+  @doc """
+  Shortcut for `sort/5`
+  """
+  def sort(base_query, schema, sort_query) do
     sortable_fields = schema.__schema__(:fields)
     mapping = DefaultMapping
 

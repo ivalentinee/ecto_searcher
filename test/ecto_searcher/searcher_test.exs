@@ -16,8 +16,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "finds records for one field" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{"column_one_eq" => "some value"}
       )
@@ -31,8 +34,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "finds records for multiple matchers for one field" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{
           "column_one_gteq" => "0",
@@ -51,8 +57,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "finds records for multiple fields" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{
           "column_one_eq" => "some value",
@@ -71,8 +80,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "finds records with ilike" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{"column_one_cont" => "12345"},
         [:column_one]
@@ -88,8 +100,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "ignores unpermitted fields" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{
           "column_one_eq" => "some value",
@@ -107,8 +122,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "returns all records for incorrect search_params" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         "something completely incorrect"
       )
@@ -122,8 +140,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "ignores unknown matchers" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{
           "column_one_eq" => "some value",
@@ -140,8 +161,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "runs search with custom query, value cast and matcher" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{
           "column_one_not_eq" => "some value",
@@ -166,8 +190,11 @@ defmodule EctoSearcher.SearcherTest do
   end
 
   test "runs search for aggregated matcher" do
+    base_query = Query.from(SampleModel)
+
     query =
       Searcher.search(
+        base_query,
         SampleModel,
         %{
           "integer_field_in" => ["0", "1", "2", "3"]
