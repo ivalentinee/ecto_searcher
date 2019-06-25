@@ -4,9 +4,9 @@ defmodule EctoSearcher.Searcher.DefaultMapping do
   alias Ecto.Query
 
   @moduledoc """
-  Contains default condition mapping.
+  Contains default matcher mapping.
 
-  ## Conditions
+  ## Matchers
   - `eq` — equality (`field == value`)
   - `cont` — contains substring (`ilike(field, value)`)
   - `in` — inclusion (`field in value`)
@@ -17,7 +17,7 @@ defmodule EctoSearcher.Searcher.DefaultMapping do
   - `overlaps` — arrays overlap (`field && value`)
   """
 
-  def conditions do
+  def matchers do
     %{
       "eq" => fn field, value -> Query.dynamic([q], ^field == ^value) end,
       "cont" => fn field, value -> Query.dynamic([q], ilike(^field, ^"%#{value}%")) end,

@@ -3,10 +3,10 @@ defmodule EctoSearcher.Searcher.Utils.Value do
 
   alias Ecto.Type
 
-  def cast(schema, field_name, value, condition_name, mapping) do
+  def cast(schema, field_name, value, matcher_name, mapping) do
     type = field_type(schema, field_name, mapping)
-    condition_aggregate_type = condition_aggregate_type(condition_name, mapping)
-    cast_value(value, type, condition_aggregate_type)
+    matcher_aggregate_type = matcher_aggregate_type(matcher_name, mapping)
+    cast_value(value, type, matcher_aggregate_type)
   end
 
   defp field_type(schema, field_name, mapping) do
@@ -22,23 +22,23 @@ defmodule EctoSearcher.Searcher.Utils.Value do
     end
   end
 
-  defp condition_aggregate_type(condition_name, mapping) do
-    conditions = mapping.conditions
+  defp matcher_aggregate_type(matcher_name, mapping) do
+    matchers = mapping.matchers
 
-    with true <- is_map(conditions),
-         true <- is_map(conditions[condition_name]),
-         condition_type <- conditions[condition_name][:aggregation],
-         false <- is_nil(condition_type) do
-      condition_type
+    with true <- is_map(matchers),
+         true <- is_map(matchers[matcher_name]),
+         matcher_type <- matchers[matcher_name][:aggregation],
+         false <- is_nil(matcher_type) do
+      matcher_type
     else
       _ -> nil
     end
   end
 
-  defp cast_value(value, plain_type, condition_aggregate_type) do
+  defp cast_value(value, plain_type, matcher_aggregate_type) do
     type =
-      if condition_aggregate_type do
-        {condition_aggregate_type, plain_type}
+      if matcher_aggregate_type do
+        {matcher_aggregate_type, plain_type}
       else
         plain_type
       end

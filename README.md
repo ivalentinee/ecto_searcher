@@ -44,14 +44,14 @@ Advanced usage:
 defmodule MySuperApp.CustomMapping do
   use EctoSearcher.Searcher.Mapping
 
-  def conditions do
-    custom_conditions = %{
+  def matchers do
+    custom_matchers = %{
       "not_eq" => fn field, value -> Query.dynamic([q], ^field != ^value) end
     }
 
     Map.merge(
-      custom_conditions,
-      EctoSearcher.Searcher.DefaultMapping.conditions()
+      custom_matchers,
+      EctoSearcher.Searcher.DefaultMapping.matchers()
     )
   end
 

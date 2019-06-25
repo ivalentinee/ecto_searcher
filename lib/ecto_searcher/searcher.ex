@@ -14,7 +14,7 @@ defmodule EctoSearcher.Searcher do
   require Ecto.Query
   alias Ecto.Query
   alias EctoSearcher.Searcher.DefaultMapping
-  alias EctoSearcher.Searcher.Utils.{Field, Value, Condition, SearchQuery}
+  alias EctoSearcher.Searcher.Utils.{Field, Value, Matcher, SearchQuery}
 
   @doc """
   Shortcut for `search/5`
@@ -49,7 +49,7 @@ defmodule EctoSearcher.Searcher do
 
   Takes `%Ecto.Query{}` as `base_query` and ecto model as `schema`.
 
-  `search_params` should be a map with search_fields in form of `"field_condition"` like this:
+  `search_params` should be a map with search_fields in form of `"field_matcher"` like this:
   ```elixir
     %{
       "name_eq" => "Donald Trump",
@@ -73,20 +73,24 @@ defmodule EctoSearcher.Searcher do
       )
       when is_list(searchable_fields) and is_atom(mapping) do
     if is_map(search_params) do
-      search_params
-      |> SearchQuery.from_params(searchable_fields)
-      |> Enum.reduce(base_query, fn search_query, query_with_conditions ->
-        ecto_query = search_to_ecto_query(search_query, schema, mapping)
-
-        if ecto_query do
-          Query.where(query_with_conditions, ^ecto_query)
-        else
-          query_with_conditions
-        end
-      end)
+      build_query(base_query, schema, search_params, searchable_fields, mapping)
     else
       base_query
     end
+  end
+
+  defp build_query(base_query, schema, search_params, searchable_fields, mapping) do
+    search_params
+    |> SearchQuery.from_params(searchable_fields)
+    |> Enum.reduce(base_query, fn search_query, query_with_matchers ->
+      ecto_query = search_to_ecto_query(search_query, schema, mapping)
+
+      if ecto_query do
+        Query.where(query_with_matchers, ^ecto_query)
+      else
+        query_with_matchers
+      end
+    end)
   end
 
   defp search_to_ecto_query(search_query, schema, mapping) do
@@ -97,10 +101,10 @@ defmodule EctoSearcher.Searcher do
         schema,
         search_query.field,
         search_query.value,
-        search_query.condition,
+        search_query.matcher,
         mapping
       )
 
-    Condition.lookup(field_query, search_query.condition, casted_value, mapping)
+    Matcher.lookup(field_query, search_query.matcher, casted_value, mapping)
   end
 end

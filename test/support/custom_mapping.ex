@@ -3,14 +3,14 @@ defmodule CustomMapping do
   require Ecto.Query
   alias Ecto.Query
 
-  def conditions do
-    custom_conditions = %{
+  def matchers do
+    custom_mather = %{
       "not_eq" => fn field, value -> Query.dynamic([q], ^field != ^value) end
     }
 
     Map.merge(
-      custom_conditions,
-      EctoSearcher.Searcher.DefaultMapping.conditions()
+      custom_mather,
+      EctoSearcher.Searcher.DefaultMapping.matchers()
     )
   end
 

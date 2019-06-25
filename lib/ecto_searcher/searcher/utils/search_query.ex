@@ -5,8 +5,8 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
   This module is internal. Use at your own risk.
   """
 
-  @enforce_keys [:field, :condition, :value]
-  defstruct [:field, :condition, :value]
+  @enforce_keys [:field, :matcher, :value]
+  defstruct [:field, :matcher, :value]
 
   @doc """
   Builds `%SearchQuery{}` from params
@@ -17,8 +17,8 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
   search_params = %{"name_eq" => "Donald Trump", "description_cont" => "My president"}
   EctoSearcher.Searcher.SearchQuery.from_params(search_params, searchable_fields)
   # => [
-  #      EctoSearcher.Searcher.SearchQuery(field: :name, condition: "eq", value: "Donald Trump"),
-  #      EctoSearcher.Searcher.SearchQuery(field: :description, condition: "cont", value: "My president"),
+  #      EctoSearcher.Searcher.SearchQuery(field: :name, matcher: "eq", value: "Donald Trump"),
+  #      EctoSearcher.Searcher.SearchQuery(field: :description, matcher: "cont", value: "My president"),
   #    ]
   ```
   """
@@ -39,25 +39,25 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
   searchable_fields = [:name, :description]
   search_expression = {"name_eq", "Donald Trump"}
   EctoSearcher.Searcher.SearchQuery.build(search_expression, searchable_fields)
-  # => EctoSearcher.Searcher.SearchQuery(field: :name, condition: "eq", value: "Donald Trump")
+  # => EctoSearcher.Searcher.SearchQuery(field: :name, matcher: "eq", value: "Donald Trump")
   ```
   """
   def build(search_expression, searchable_fields)
 
   def build({search_key, value}, searchable_fields) do
-    case field_and_condition(search_key, searchable_fields) do
-      {field, condition} -> %__MODULE__{field: field, condition: condition, value: value}
+    case field_and_matcher(search_key, searchable_fields) do
+      {field, matcher} -> %__MODULE__{field: field, matcher: matcher, value: value}
       _ -> nil
     end
   end
 
   def build(_, _), do: nil
 
-  defp field_and_condition(search_key, searchable_fields) do
+  defp field_and_matcher(search_key, searchable_fields) do
     field = search_field_name(search_key, searchable_fields)
 
     if field do
-      split_into_field_and_condition(search_key, field)
+      split_into_field_and_matcher(search_key, field)
     end
   end
 
@@ -67,8 +67,8 @@ defmodule EctoSearcher.Searcher.Utils.SearchQuery do
     end)
   end
 
-  defp split_into_field_and_condition(search_key, field) do
-    condition_name = String.replace_leading(search_key, "#{field}_", "")
-    {field, condition_name}
+  defp split_into_field_and_matcher(search_key, field) do
+    matcher_name = String.replace_leading(search_key, "#{field}_", "")
+    {field, matcher_name}
   end
 end

@@ -30,7 +30,7 @@ defmodule EctoSearcher.SearcherTest do
     assert 1 = Enum.count(found_records)
   end
 
-  test "finds records for multiple conditions for one field" do
+  test "finds records for multiple matchers for one field" do
     query =
       Searcher.search(
         SampleModel,
@@ -122,13 +122,13 @@ defmodule EctoSearcher.SearcherTest do
     assert 2 = Enum.count(found_records)
   end
 
-  test "ignores unknown conditions" do
+  test "ignores unknown matchers" do
     query =
       Searcher.search(
         SampleModel,
         %{
           "column_one_eq" => "some value",
-          "column_two_unknown_condition" => "some other value"
+          "column_two_unknown_matcher" => "some other value"
         },
         [:column_one, :column_two]
       )
@@ -141,7 +141,7 @@ defmodule EctoSearcher.SearcherTest do
     assert 1 = Enum.count(found_records)
   end
 
-  test "runs search with custom query, value cast and condition" do
+  test "runs search with custom query, value cast and matcher" do
     query =
       Searcher.search(
         SampleModel,
@@ -163,7 +163,7 @@ defmodule EctoSearcher.SearcherTest do
     assert 1 = Enum.count(found_records)
   end
 
-  test "runs search for aggregated condition" do
+  test "runs search for aggregated matcher" do
     query =
       Searcher.search(
         SampleModel,

@@ -1,6 +1,6 @@
 defmodule EctoSearcher.Searcher.Mapping do
   @moduledoc """
-  Behaviour for search query, condition and field mappings
+  Behaviour for search query, matcher and field mappings
 
   ## Usage
   Either adopt `EctoSearcher.Searcher.Mapping` behaviour and implement callbacks or `use EctoSearcher.Searcher.Mapping`, which provides defaults.
@@ -11,7 +11,7 @@ defmodule EctoSearcher.Searcher.Mapping do
     require Ecto.Query
     alias Ecto.Query
 
-    def conditions
+    def matchers
       %{
         "not_eq" => fn(field, value) -> Query.dynamic([q], ^field != ^value) end
       }
@@ -21,9 +21,9 @@ defmodule EctoSearcher.Searcher.Mapping do
   """
 
   @doc """
-  Should return map with search conditions
+  Should return map with search matchers
 
-  Search condition map should look like:
+  Search matcher map should look like:
   ```elixir
   %{
     "not_eq" => fn(field, value) -> Query.dynamic([q], ^field != ^value) end
@@ -34,13 +34,13 @@ defmodule EctoSearcher.Searcher.Mapping do
   }
   ```
 
-  Condition name will be matched as search field suffix.
+  Matcher name will be matched as search field suffix.
 
   Values should either be a query function or a map with query function as `:query` and value aggregate type as `:aggregation`.
 
   Query function will be called with arguments `field` (`atom`) and `value` (casted to specific type) and should return `Ecto.Query.DynamicExpr`.
   """
-  @callback conditions() :: Map.t()
+  @callback matchers() :: Map.t()
   @doc """
   Should return map with field queries
 
@@ -66,16 +66,16 @@ defmodule EctoSearcher.Searcher.Mapping do
       @behaviour EctoSearcher.Searcher.Mapping
 
       @doc """
-      Callback implementation for `EctoSearcher.Searcher.Mapping.conditions/0`
+      Callback implementation for `EctoSearcher.Searcher.Mapping.matchers/0`
       """
-      def conditions, do: %{}
+      def matchers, do: %{}
 
       @doc """
       Callback implementation for `EctoSearcher.Searcher.Mapping.fields/0`
       """
       def fields, do: %{}
 
-      defoverridable conditions: 0, fields: 0
+      defoverridable matchers: 0, fields: 0
     end
   end
 end
