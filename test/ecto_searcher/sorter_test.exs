@@ -12,11 +12,33 @@ defmodule EctoSearcher.SorterTest do
     query =
       Sorter.sort(
         TestSchema,
-        %{"field" => "test_field_one", "order" => "asc"},
-        [:test_field_one]
+        %{"field" => "test_field_one", "order" => "asc"}
       )
 
-    expected_query = Query.from(t in TestSchema, order_by: [asc: t.test_field_one])
+    expected_query =
+      Query.from(t in TestSchema,
+        order_by: [fragment("? ?", ^Query.dynamic([q], q.test_field_one), ^"asc")]
+      )
+
+    assert inspect(expected_query) == inspect(query)
+  end
+
+  test "builds asc sort query with custom field" do
+    query =
+      Sorter.sort(
+        TestSchema,
+        TestSchema,
+        %{"field" => "datetime_field_as_date", "order" => "asc"},
+        [:datetime_field_as_date],
+        CustomMapping
+      )
+
+    expected_query =
+      Query.from(t in TestSchema,
+        order_by: [
+          fragment("? ?", ^Query.dynamic([q], fragment("?::date", q.custom_field)), ^"asc")
+        ]
+      )
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -25,11 +47,15 @@ defmodule EctoSearcher.SorterTest do
     query =
       Sorter.sort(
         TestSchema,
+        TestSchema,
         %{"field" => "test_field_one", "order" => "desc"},
         [:test_field_one]
       )
 
-    expected_query = Query.from(t in TestSchema, order_by: [desc: t.test_field_one])
+    expected_query =
+      Query.from(t in TestSchema,
+        order_by: [fragment("? ?", ^Query.dynamic([q], q.test_field_one), ^"desc")]
+      )
 
     assert inspect(expected_query) == inspect(query)
   end
@@ -37,6 +63,7 @@ defmodule EctoSearcher.SorterTest do
   test "ignores unpermitted fields" do
     query =
       Sorter.sort(
+        TestSchema,
         TestSchema,
         %{"field" => "test_field_one", "order" => "asc"},
         [:test_field_two]
@@ -50,6 +77,7 @@ defmodule EctoSearcher.SorterTest do
   test "returns base_query for incorrect search_params" do
     query =
       Sorter.sort(
+        TestSchema,
         TestSchema,
         "something completely incorrect",
         [:test_field_two]

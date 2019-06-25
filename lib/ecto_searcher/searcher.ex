@@ -13,7 +13,20 @@ defmodule EctoSearcher.Searcher do
 
   require Ecto.Query
   alias Ecto.Query
+  alias EctoSearcher.Searcher.DefaultMapping
   alias EctoSearcher.Searcher.Utils.{Field, Value, Condition, SearchQuery}
+
+  @doc """
+  Shortcut for `search/5`
+
+  Takes `schema` as `base_query`, searhable_fields as `schema` fields and `mapping` as `EctoSearcher.Searcher.DefaultMapping`.
+  """
+  def search(schema, search_params) do
+    base_query = Query.from(schema)
+    searchable_fields = schema.__schema__(:fields)
+    mapping = DefaultMapping
+    search(base_query, schema, search_params, searchable_fields, mapping)
+  end
 
   @doc """
   Shortcut for `search/5`
@@ -24,7 +37,7 @@ defmodule EctoSearcher.Searcher do
         schema,
         search_params,
         searchable_fields,
-        mapping \\ EctoSearcher.Searcher.DefaultMapping
+        mapping \\ DefaultMapping
       )
       when is_list(searchable_fields) and is_atom(mapping) do
     base_query = Query.from(schema)

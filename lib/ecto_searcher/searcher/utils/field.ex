@@ -12,7 +12,7 @@ defmodule EctoSearcher.Searcher.Utils.Field do
 
       case field do
         %{query: query} -> query
-        anythong_else -> anythong_else
+        anything_else -> anything_else
       end
     else
       default_field_query(field_name)

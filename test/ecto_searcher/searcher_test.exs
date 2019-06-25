@@ -12,8 +12,7 @@ defmodule EctoSearcher.SearcherTest do
     query =
       Searcher.search(
         TestSchema,
-        %{"test_field_one_eq" => "some value"},
-        [:test_field_one]
+        %{"test_field_one_eq" => "some value"}
       )
 
     expected_query = Query.from(t in TestSchema, where: t.test_field_one == ^"some value")
