@@ -12,10 +12,12 @@ Add `ecto_searcher` from github to your mix.ex deps:
 ```elixir
 def deps do
   [
-    {:ecto_searcher, "0.1.1"}
+    {:ecto_searcher, github: "ivalentinee/ecto_searcher"}
   ]
 end
 ```
+
+For now use github version. Waiting for Ecto 3.2 release.
 
 ## Usage
 First, we need examples, 'cause who needs a long good explanation.
