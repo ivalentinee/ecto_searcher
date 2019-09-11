@@ -16,7 +16,7 @@ defmodule EctoSearcher.Searcher do
   alias EctoSearcher.Searcher.Utils.{Field, Value, Matcher, SearchCondition}
 
   @doc """
-  Shortcut for `search/5`
+  Shortcut for `search/5` with `DefaultMapping` as `mapping` and `nil` as `searchable_fields`
   """
   def search(base_query, schema, search_params) do
     mapping = DefaultMapping
@@ -24,7 +24,7 @@ defmodule EctoSearcher.Searcher do
   end
 
   @doc """
-  Shortcut for `search/5`
+  Shortcut for `search/5` with `DefaultMapping` as mapping
   """
   def search(base_query, schema, search_params, searchable_fields)
       when is_list(searchable_fields) do
@@ -47,7 +47,7 @@ defmodule EctoSearcher.Searcher do
 
   `mapping` should implement `EctoSearcher.Searcher.Mapping` behavior. `EctoSearcher.Searcher.DefaultMapping` provides some basics.
 
-  `searchable_fields` is a list with fields (atoms) permitted for searching.
+  `searchable_fields` is a list with fields (atoms) permitted for searching. If not provided (`nil`) all fields are allowed for searching.
   """
   def search(base_query = %Ecto.Query{}, schema, search_params, mapping, searchable_fields \\ nil)
       when is_atom(mapping) do

@@ -17,18 +17,17 @@ def deps do
 end
 ```
 
-## Usage
-First, we need examples, 'cause who needs a long good explanation.
+## Notice
+This package is build for sql queries and is tested with PostgreSQL. Every other usage may not work.
 
-Model:
-```elixir
-defmodule MyMegaModel do
-  use Ecto.Schema
-  # ... some ecto model code
-end
-```
+## Usage
+Obviously, EctoSearcher works on top of ecto schemas and ecto repos. It consumes ecto query and adds conditions built from input.
+
+Searching with `EctoSearcher.Searcher.search/5` and sorting `EctoSearcher.Searcher.sort/5` could be used separately or together.
 
 ### Searching
+To search use `EctoSearcher.Searcher.search/4` or `EctoSearcher.Searcher.search/5`:
+
 Basic usage:
 ```elixir
 defmodule TotallyNotAPhoenixController do
@@ -41,7 +40,7 @@ defmodule TotallyNotAPhoenixController do
 end
 ```
 
-Advanced usage:
+In case you need to implement custom field queries or custom matchers you can implement custom Mapping:
 ```elixir
 defmodule MySuperApp.CustomMapping do
   use EctoSearcher.Searcher.Mapping
@@ -51,6 +50,7 @@ defmodule MySuperApp.CustomMapping do
       "not_eq" => fn field, value -> Query.dynamic([q], ^field != ^value) end
     }
 
+    ## No magic, just plain data manipulation
     Map.merge(
       custom_matchers,
       EctoSearcher.Searcher.DefaultMapping.matchers()
@@ -66,7 +66,10 @@ defmodule MySuperApp.CustomMapping do
     }
   end
 end
+```
 
+And use it in `EctoSearcher.Searcher.search/5`:
+```elixir
 defmodule TotallyNotAPhoenixContext do
   import Ecto.Query
   require Ecto.Query
@@ -86,7 +89,7 @@ end
 ```
 
 ### Sorting
-Basic usage:
+To sort use `EctoSearcher.Sorter.sort/3` or `EctoSearcher.Sorter.sort/5`:
 ```elixir
 defmodule TotallyNotAPhoenixController do
   def not_some_controller_method() do
@@ -98,7 +101,7 @@ defmodule TotallyNotAPhoenixController do
 end
 ```
 
-Advanced usage:
+Same as with searching you can implement custom mapping and use it in `EctoSearcher.Sorter.sort/5`:
 ```elixir
 defmodule MySuperApp.CustomMapping do
   use EctoSearcher.Searcher.Mapping
@@ -131,6 +134,3 @@ defmodule TotallyNotAPhoenixContext do
   end
 end
 ```
-
-## Explanation
-Just look the code. Or usage. Or both.

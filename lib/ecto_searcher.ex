@@ -2,24 +2,35 @@ defmodule EctoSearcher do
   @moduledoc """
   EctoSearcher is an attempt to bring dynamicly built queries (hello [Ransack](https://github.com/activerecord-hackery/ransack)) to the world of [Ecto](https://github.com/elixir-ecto/ecto).
 
-  - `EctoSearcher.Searcher` — use this to search
+  ## Installation
 
-  - `EctoSearcher.Sorter` — use this to sort
+  Add `ecto_searcher` from github to your mix.ex deps:
 
-  - `EctoSearcher.Searcher.Mapping` — use this to implement custom searches
-
-  - `EctoSearcher.Searcher.DefaultMapping` — use this if you don't want to implement custom mapping
-
-  ## Usage
-  Model:
   ```elixir
-  defmodule MyMegaModel do
-    use Ecto.Schema
-    # ... some ecto model code
+  def deps do
+    [
+      {:ecto_searcher, "~> 0.2.0"}
+    ]
   end
   ```
 
+  ## Notice
+  This package is build for sql queries and is tested with PostgreSQL. Every other usage may not work.
+
+  ## Usage (short)
+  - `EctoSearcher.Searcher` — use this to search
+  - `EctoSearcher.Sorter` — use this to sort
+  - `EctoSearcher.Searcher.Mapping` — use this to implement custom searches
+  - `EctoSearcher.Searcher.DefaultMapping` — use this if you don't want to implement custom mapping
+
+  ## Usage
+  Obviously, EctoSearcher works on top of ecto schemas and ecto repos. It consumes ecto query and adds conditions built from input.
+
+  Searching with `EctoSearcher.Searcher.search/5` and sorting `EctoSearcher.Searcher.sort/5` could be used separately or together.
+
   ### Searching
+  To search use `EctoSearcher.Searcher.search/4` or `EctoSearcher.Searcher.search/5`:
+
   Basic usage:
   ```elixir
   defmodule TotallyNotAPhoenixController do
@@ -32,7 +43,7 @@ defmodule EctoSearcher do
   end
   ```
 
-  Advanced usage:
+  In case you need to implement custom field queries or custom matchers you can implement custom Mapping:
   ```elixir
   defmodule MySuperApp.CustomMapping do
     use EctoSearcher.Searcher.Mapping
@@ -42,6 +53,7 @@ defmodule EctoSearcher do
         "not_eq" => fn field, value -> Query.dynamic([q], ^field != ^value) end
       }
 
+      ## No magic, just plain data manipulation
       Map.merge(
         custom_matchers,
         EctoSearcher.Searcher.DefaultMapping.matchers()
@@ -57,7 +69,10 @@ defmodule EctoSearcher do
       }
     end
   end
+  ```
 
+  And use it in `EctoSearcher.Searcher.search/5`:
+  ```elixir
   defmodule TotallyNotAPhoenixContext do
     import Ecto.Query
     require Ecto.Query
@@ -77,6 +92,7 @@ defmodule EctoSearcher do
   ```
 
   ### Sorting
+  To sort use `EctoSearcher.Sorter.sort/3` or `EctoSearcher.Sorter.sort/5`:
   ```elixir
   defmodule TotallyNotAPhoenixController do
     def not_some_controller_method() do
@@ -88,7 +104,7 @@ defmodule EctoSearcher do
   end
   ```
 
-  Advanced usage:
+  Same as with searching you can implement custom mapping and use it in `EctoSearcher.Sorter.sort/5`:
   ```elixir
   defmodule MySuperApp.CustomMapping do
     use EctoSearcher.Searcher.Mapping
