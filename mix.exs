@@ -47,12 +47,11 @@ defmodule EctoSearcher.MixProject do
 
   defp deps do
     [
-      # waiting for ecto 3.2
-      {:ecto, github: "elixir-ecto/ecto"},
+      {:ecto, "~> 3.2"},
       {:ex_doc, "~> 0.19", only: :dev},
-      {:ecto_sql, github: "elixir-ecto/ecto_sql", only: :test, optional: true},
+      {:ecto_sql, "~> 3.2", only: :test, optional: true},
       {:postgrex, ">= 0.0.0", only: :test, optional: true},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test, optional: true}
     ]
   end
 end
