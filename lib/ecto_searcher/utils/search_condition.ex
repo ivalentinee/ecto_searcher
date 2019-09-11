@@ -1,4 +1,4 @@
-defmodule EctoSearcher.Searcher.Utils.SearchCondition do
+defmodule EctoSearcher.Utils.SearchCondition do
   @moduledoc """
   Builds SearchCondition from params
 

@@ -1,4 +1,4 @@
-defmodule EctoSearcher.Searcher.Utils.Matcher do
+defmodule EctoSearcher.Utils.Matcher do
   @moduledoc false
 
   def lookup(matcher_name, mapping) do

@@ -1,13 +1,13 @@
-defmodule EctoSearcher.Searcher.Mapping do
+defmodule EctoSearcher.Mapping do
   @moduledoc """
   Behaviour for search query, matcher and field mappings
 
   ## Usage
-  Either adopt `EctoSearcher.Searcher.Mapping` behaviour and implement callbacks or `use EctoSearcher.Searcher.Mapping`, which provides defaults.
+  Either adopt `EctoSearcher.Mapping` behaviour and implement callbacks or `use EctoSearcher.Mapping`, which provides defaults.
 
   ```elixir
   defmodule CustomMapping do
-    use EctoSearcher.Searcher.Mapping
+    use EctoSearcher.Mapping
     require Ecto.Query
     alias Ecto.Query
 
@@ -41,6 +41,7 @@ defmodule EctoSearcher.Searcher.Mapping do
   Query function will be called with arguments `field` (`atom`) and `value` (casted to specific type) and should return `Ecto.Query.DynamicExpr`.
   """
   @callback matchers() :: Map.t()
+
   @doc """
   Should return map with field queries
 
@@ -58,20 +59,22 @@ defmodule EctoSearcher.Searcher.Mapping do
   Field name will be matched as search field prefix (from `searchable_fields`).
 
   Values should either be a `Ecto.Query.DynamicExpr` or a map with `Ecto.Query.DynamicExpr` as `:query` and value type as `:type`.
+
+  `EctoSearcher.Searcher.search/5` and `EctoSearcher.Sorter.sort/5` looks up fields in mapping first, then looks up fields in schema.
   """
   @callback fields() :: Map.t()
 
   defmacro __using__(_) do
     quote do
-      @behaviour EctoSearcher.Searcher.Mapping
+      @behaviour EctoSearcher.Mapping
 
       @doc """
-      Callback implementation for `EctoSearcher.Searcher.Mapping.matchers/0`
+      Callback implementation for `EctoSearcher.Mapping.matchers/0`
       """
-      def matchers, do: EctoSearcher.Searcher.DefaultMapping.matchers()
+      def matchers, do: EctoSearcher.Mapping.Default.matchers()
 
       @doc """
-      Callback implementation for `EctoSearcher.Searcher.Mapping.fields/0`
+      Callback implementation for `EctoSearcher.Mapping.fields/0`
       """
       def fields, do: %{}
 

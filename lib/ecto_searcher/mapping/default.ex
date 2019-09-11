@@ -1,5 +1,5 @@
-defmodule EctoSearcher.Searcher.DefaultMapping do
-  use EctoSearcher.Searcher.Mapping
+defmodule EctoSearcher.Mapping.Default do
+  use EctoSearcher.Mapping
   require Ecto.Query
   alias Ecto.Query
 

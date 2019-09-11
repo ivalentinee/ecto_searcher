@@ -1,4 +1,4 @@
-defmodule EctoSearcher.Searcher.Utils.Field do
+defmodule EctoSearcher.Utils.Field do
   @moduledoc false
 
   require Ecto.Query

@@ -14,8 +14,8 @@ defmodule EctoSearcher.Sorter do
 
   require Ecto.Query
   alias Ecto.Query
-  alias EctoSearcher.Searcher.DefaultMapping
-  alias EctoSearcher.Searcher.Utils.Field
+  alias EctoSearcher.Mapping.Default, as: DefaultMapping
+  alias EctoSearcher.Utils.Field
 
   @doc """
   Shortcut for `sort/5`
@@ -40,13 +40,12 @@ defmodule EctoSearcher.Sorter do
     }
   ```
 
+  `mapping` should implement `EctoSearcher.Mapping` behavior. `EctoSearcher.Mapping.Default` provides some basics.
+
+  `sortable_fields` is a list with fields (atoms) permitted for sorting. If not provided (or `nil`) all fields are allowed for sorting:
   ```elixir
   [:name, :description]
   ```
-
-  `mapping` should implement `EctoSorter.Sorter.Mapping` behavior. `EctoSorter.Sorter.DefaultMapping` provides some basics.
-
-  `searchable_fields` is a list with fields (atoms) permitted for searching.
   """
   def sort(
         base_query,

@@ -41,10 +41,24 @@ defmodule TotallyNotAPhoenixController do
 end
 ```
 
-In case you need to implement custom field queries or custom matchers you can implement custom Mapping:
+### Sorting
+To sort use `EctoSearcher.Sorter.sort/3` or `EctoSearcher.Sorter.sort/5`:
+```elixir
+defmodule TotallyNotAPhoenixController do
+  def not_some_controller_method() do
+    base_query = Ecto.Query.from(MyMegaModel)
+    sort = %{"field" => "name", "order" => "desc"}
+    query = EctoSearcher.Sorter.sort(base_query, MyMegaModel, sort)
+    MySuperApp.Repo.all(query)
+  end
+end
+```
+
+### Custom fields and matchers
+In case you need to implement custom field queries or custom matchers you can implement custom Mapping (using `EctoSearcher.Mapping` behaviour):
 ```elixir
 defmodule MySuperApp.CustomMapping do
-  use EctoSearcher.Searcher.Mapping
+  use EctoSearcher.Mapping
 
   def matchers do
     custom_matchers = %{
@@ -54,7 +68,7 @@ defmodule MySuperApp.CustomMapping do
     ## No magic, just plain data manipulation
     Map.merge(
       custom_matchers,
-      EctoSearcher.Searcher.DefaultMapping.matchers()
+      EctoSearcher.Mapping.Default.matchers()
     )
   end
 
@@ -69,60 +83,18 @@ defmodule MySuperApp.CustomMapping do
 end
 ```
 
-And use it in `EctoSearcher.Searcher.search/5`:
+And use it in `EctoSearcher.Searcher.search/5` or `EctoSearcher.Sorter.sort/5`:
 ```elixir
 defmodule TotallyNotAPhoenixContext do
   import Ecto.Query
   require Ecto.Query
 
   def not_some_context_method() do
-    searchable_fields = [:name, :datetime_as_date, :description]
     search = %{
       "name_eq" => "Donald Trump",
       "datetime_as_date_gteq" => "2016-11-08", "datetime_as_date_lteq" => "2018-08-28",
       "description_not_eq" => "Not my president"
     }
-    base_query = from(q in MyMegaModel, where: [q.id < 1984])
-    query = EctoSearcher.Searcher.search(base_query, MyMegaModel, search, MySuperApp.CustomMapping, searchable_fields)
-    MySuperApp.Repo.all(query)
-  end
-end
-```
-
-### Sorting
-To sort use `EctoSearcher.Sorter.sort/3` or `EctoSearcher.Sorter.sort/5`:
-```elixir
-defmodule TotallyNotAPhoenixController do
-  def not_some_controller_method() do
-    base_query = Ecto.Query.from(MyMegaModel)
-    sort = %{"field" => "name", "order" => "desc"}
-    query = EctoSearcher.Sorter.sort(base_query, MyMegaModel, sort)
-    MySuperApp.Repo.all(query)
-  end
-end
-```
-
-Same as with searching you can implement custom mapping and use it in `EctoSearcher.Sorter.sort/5`:
-```elixir
-defmodule MySuperApp.CustomMapping do
-  use EctoSearcher.Searcher.Mapping
-
-  def fields do
-    %{
-      datetime_field_as_date: %{
-        query: Query.dynamic([q], fragment("?::date", q.custom_field)),
-        type: :date
-      }
-    }
-  end
-end
-
-defmodule TotallyNotAPhoenixContext do
-  import Ecto.Query
-  require Ecto.Query
-
-  def not_some_context_method() do
-    sortable_fields = [:name, :datetime_as_date]
 
     sort = %{
       "field" => "datetime_as_date_gteq",
@@ -130,8 +102,13 @@ defmodule TotallyNotAPhoenixContext do
     }
 
     base_query = from(q in MyMegaModel, where: [q.id < 1984])
-    query = EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, MySuperApp.CustomMapping, sortable_fields)
-    MySuperApp.Repo.all(query)
+    query =
+    base_query
+    |> EctoSearcher.Searcher.search(MyMegaModel, search, MySuperApp.CustomMapping)
+    |> EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, MySuperApp.CustomMapping)
+    |> MySuperApp.Repo.all()
   end
 end
 ```
+
+`EctoSearcher.Searcher.search/5` and `EctoSearcher.Sorter.sort/5` looks up fields in mapping first, then looks up fields in schema.

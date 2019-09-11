@@ -1,7 +1,7 @@
-defmodule EctoSearcher.Searcher.Utils.SearchConditionTest do
+defmodule EctoSearcher.Utils.SearchConditionTest do
   use ExUnit.Case
 
-  alias EctoSearcher.Searcher.Utils.SearchCondition
+  alias EctoSearcher.Utils.SearchCondition
 
   test "builds search query from expression" do
     field = :some_field

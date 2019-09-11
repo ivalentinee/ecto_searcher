@@ -1,5 +1,5 @@
 defmodule CustomMapping do
-  use EctoSearcher.Searcher.Mapping
+  use EctoSearcher.Mapping
   require Ecto.Query
   alias Ecto.Query
 
@@ -10,7 +10,7 @@ defmodule CustomMapping do
 
     Map.merge(
       custom_mather,
-      EctoSearcher.Searcher.DefaultMapping.matchers()
+      EctoSearcher.Mapping.Default.matchers()
     )
   end
 

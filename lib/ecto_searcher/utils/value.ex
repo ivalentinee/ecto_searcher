@@ -1,8 +1,8 @@
-defmodule EctoSearcher.Searcher.Utils.Value do
+defmodule EctoSearcher.Utils.Value do
   @moduledoc false
 
   alias Ecto.Type
-  alias EctoSearcher.Searcher.Utils.SearchCondition
+  alias EctoSearcher.Utils.SearchCondition
 
   def cast(search_query = %SearchCondition{}, schema, mapping) do
     type = field_type(schema, search_query.field, mapping)

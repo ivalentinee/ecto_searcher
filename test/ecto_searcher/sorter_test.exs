@@ -8,7 +8,7 @@ defmodule EctoSearcher.SorterTest do
   alias EctoSearcher.SampleModel
   alias EctoSearcher.Sorter
   alias EctoSearcher.TestRepo
-  alias EctoSearcher.Searcher.DefaultMapping
+  alias EctoSearcher.Mapping.Default, as: DefaultMapping
   alias Ecto.Query
   require Query
 
