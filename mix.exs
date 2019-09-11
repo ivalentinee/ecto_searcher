@@ -48,7 +48,7 @@ defmodule EctoSearcher.MixProject do
   defp deps do
     [
       {:ecto, "~> 3.2"},
-      {:ex_doc, "~> 0.19", only: :dev},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:ecto_sql, "~> 3.2", only: :test, optional: true},
       {:postgrex, ">= 0.0.0", only: :test, optional: true},
       {:excoveralls, "~> 0.10", only: :test, optional: true}

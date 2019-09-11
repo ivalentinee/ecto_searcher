@@ -7,7 +7,7 @@ services:
       - "5432:5432"
 
   app:
-    image: elixir:1.8.0-slim
+    image: elixir:1.9.0-slim
     volumes:
       - ./:/app
     working_dir: /app
