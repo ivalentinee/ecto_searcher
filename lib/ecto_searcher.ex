@@ -4,7 +4,7 @@ defmodule EctoSearcher do
 
   ## Installation
 
-  Add `ecto_searcher` from github to your mix.ex deps:
+  Add `ecto_searcher` to your mix.ex deps:
 
   ```elixir
   def deps do
