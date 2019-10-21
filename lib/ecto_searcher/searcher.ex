@@ -15,17 +15,23 @@ defmodule EctoSearcher.Searcher do
   alias EctoSearcher.Mapping.Default
   alias EctoSearcher.Utils.{Field, Value, Matcher, SearchCondition}
 
+  @type search_params() :: %{String.t() => String.t()}
+  @type searchable_fields() :: [atom()]
+
   @doc """
-  Shortcut for `search/5` with `Default` as `mapping` and `nil` as `searchable_fields`
+  Shortcut for `search/5` with `EctoSearcher.Mapping.Default` as `mapping` and `nil` as `searchable_fields`
   """
+  @spec search(Ecto.Queryable.t(), Ecto.Schema.t(), search_params()) :: Ecto.Queryable.t()
   def search(base_query, schema, search_params) do
     mapping = Default
     search(base_query, schema, search_params, mapping)
   end
 
   @doc """
-  Shortcut for `search/5` with `Default` as mapping
+  Shortcut for `search/5` with `EctoSearcher.Mapping.Default` as mapping
   """
+  @spec search(Ecto.Queryable.t(), Ecto.Schema.t(), search_params(), searchable_fields()) ::
+          Ecto.Queryable.t()
   def search(base_query, schema, search_params, searchable_fields)
       when is_list(searchable_fields) do
     mapping = Default
@@ -34,8 +40,6 @@ defmodule EctoSearcher.Searcher do
 
   @doc """
   Builds search query
-
-  Takes `%Ecto.Query{}` as `base_query` and ecto model as `schema`.
 
   `search_params` should be a map with search_fields in form of `"field_matcher"` like this:
   ```elixir
@@ -49,6 +53,13 @@ defmodule EctoSearcher.Searcher do
 
   `searchable_fields` is a list with fields (atoms) permitted for searching. If not provided (or `nil`) all fields are allowed for searching.
   """
+  @spec search(
+          Ecto.Queryable.t(),
+          Ecto.Schema.t(),
+          search_params(),
+          module(),
+          searchable_fields() | nil
+        ) :: Ecto.Queryable.t()
   def search(base_query = %Ecto.Query{}, schema, search_params, mapping, searchable_fields \\ nil)
       when is_atom(mapping) do
     if is_map(search_params) do

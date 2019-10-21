@@ -26,7 +26,7 @@ defmodule EctoSearcher do
   ## Usage
   Obviously, EctoSearcher works on top of ecto schemas and ecto repos. It consumes ecto query and adds conditions built from input.
 
-  Searching with `EctoSearcher.Searcher.search/5` and sorting `EctoSearcher.Searcher.sort/5` could be used separately or together.
+  Searching with `EctoSearcher.Searcher.search/5` and sorting `EctoSearcher.Sorter.sort/5` could be used separately or together.
 
   ### Searching
   To search use `EctoSearcher.Searcher.search/4` or `EctoSearcher.Searcher.search/5`:
@@ -105,10 +105,10 @@ defmodule EctoSearcher do
 
       base_query = from(q in MyMegaModel, where: [q.id < 1984])
       query =
-      base_query
-      |> EctoSearcher.Searcher.search(MyMegaModel, search, MySuperApp.CustomMapping)
-      |> EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, MySuperApp.CustomMapping)
-      |> MySuperApp.Repo.all()
+        base_query
+        |> EctoSearcher.Searcher.search(MyMegaModel, search, MySuperApp.CustomMapping)
+        |> EctoSearcher.Searcher.search(base_query, MyMegaModel, sort, MySuperApp.CustomMapping)
+        |> MySuperApp.Repo.all()
     end
   end
   ```

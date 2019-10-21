@@ -4,7 +4,7 @@ defmodule EctoSearcher.Mapping.Default do
   alias Ecto.Query
 
   @moduledoc """
-  Contains default matcher mapping.
+  Provides default matcher mapping.
 
   ## Matchers
   - `eq` — equality (`field == value`)

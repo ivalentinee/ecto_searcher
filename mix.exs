@@ -38,7 +38,7 @@ defmodule EctoSearcher.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
-  defp extra_applications(:test), do: [:logger, :postgrex]
+  defp extra_applications(:test), do: [:logger, :postgrex, :ecto_sql]
   defp extra_applications(_), do: []
 
   def application do
@@ -48,7 +48,7 @@ defmodule EctoSearcher.MixProject do
   defp deps do
     [
       {:ecto, "~> 3.2"},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:ecto_sql, "~> 3.2", only: :test, optional: true},
       {:postgrex, ">= 0.0.0", only: :test, optional: true},
       {:excoveralls, "~> 0.10", only: :test, optional: true}

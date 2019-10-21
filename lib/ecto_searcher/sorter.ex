@@ -12,6 +12,9 @@ defmodule EctoSearcher.Sorter do
 
   @allowed_order_values ["asc", "desc"]
 
+  @type sort_params() :: %{String.t() => String.t()}
+  @type sortable_fields() :: [atom()]
+
   require Ecto.Query
   alias Ecto.Query
   alias EctoSearcher.Mapping.Default, as: DefaultMapping
@@ -20,17 +23,16 @@ defmodule EctoSearcher.Sorter do
   @doc """
   Shortcut for `sort/5`
   """
-  def sort(base_query, schema, sort_query) do
+  @spec sort(Ecto.Queryable.t(), Ecto.Schema.t(), sort_params()) :: Ecto.Queryable.t()
+  def sort(base_query, schema, sort_params) do
     sortable_fields = Field.searchable_fields(schema, DefaultMapping)
     mapping = DefaultMapping
 
-    sort(base_query, schema, sort_query, mapping, sortable_fields)
+    sort(base_query, schema, sort_params, mapping, sortable_fields)
   end
 
   @doc """
   Builds sort query
-
-  Takes `%Ecto.Query{}` as `base_query` and ecto model as `schema`.
 
   `sort_params` should be a map with "field" and "order" like this:
   ```elixir
@@ -47,17 +49,24 @@ defmodule EctoSearcher.Sorter do
   [:name, :description]
   ```
   """
+  @spec sort(
+          Ecto.Queryable.t(),
+          Ecto.Schema.t(),
+          sort_params(),
+          module(),
+          sortable_fields() | nil
+        ) :: Ecto.Queryable.t()
   def sort(
         base_query,
         schema,
-        sort_query,
+        sort_params,
         mapping,
         sortable_fields \\ nil
       )
       when is_list(sortable_fields) or is_nil(sortable_fields) do
     sortable_fields = sortable_fields || Field.searchable_fields(schema, mapping)
 
-    case sort_query do
+    case sort_params do
       %{"field" => field, "order" => order} ->
         sorted_query(base_query, field, order, schema, mapping, sortable_fields)
 
