@@ -13,7 +13,7 @@ Add `ecto_searcher` to your mix.ex deps:
 ```elixir
 def deps do
   [
-    {:ecto_searcher, "~> 0.2.0"}
+    {:ecto_searcher, "~> 0.2.1"}
   ]
 end
 ```

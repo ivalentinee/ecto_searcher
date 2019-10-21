@@ -9,7 +9,7 @@ defmodule EctoSearcher do
   ```elixir
   def deps do
     [
-      {:ecto_searcher, "~> 0.2.0"}
+      {:ecto_searcher, "~> 0.2.1"}
     ]
   end
   ```
