@@ -2,7 +2,10 @@ defmodule EctoSearcher.Utils.Value do
   @moduledoc false
 
   alias Ecto.Type
+  alias Ecto.UUID
   alias EctoSearcher.Utils.SearchCondition
+
+  @uuid_types [Ecto.UUID, :binary_id]
 
   def cast(search_query = %SearchCondition{}, schema, mapping) do
     type = field_type(schema, search_query.field, mapping)
@@ -44,9 +47,17 @@ defmodule EctoSearcher.Utils.Value do
         plain_type
       end
 
-    case Type.cast(type, value) do
-      {:ok, casted_value} -> casted_value
-      _ -> nil
+    # FIXME: this won't work for aggregated uuids like {:array, Ecto.UUID}
+    if type in @uuid_types do
+      case UUID.dump(value) do
+        {:ok, dumped_value} -> dumped_value
+        _ -> nil
+      end
+    else
+      case Type.cast(type, value) do
+        {:ok, casted_value} -> casted_value
+        _ -> nil
+      end
     end
   end
 end

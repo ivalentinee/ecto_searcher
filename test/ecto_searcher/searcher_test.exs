@@ -1,7 +1,4 @@
 defmodule EctoSearcher.SearcherTest do
-  # NOTE: tests heavily rely on inspect(ecto_query). Sorry. I know it's awful.
-  #   http://alexkoppel.com/comparing-ecto-queries/ - this approach is no better I think
-
   use ExUnit.Case
 
   alias EctoSearcher.Factory
@@ -27,6 +24,24 @@ defmodule EctoSearcher.SearcherTest do
 
     Factory.create_record(%{"column_one" => "some value"})
     Factory.create_record(%{"column_one" => "some other value"})
+
+    found_records = TestRepo.all(query)
+
+    assert 1 = Enum.count(found_records)
+  end
+
+  test "finds records with uuid field" do
+    base_query = Query.from(SampleModel)
+
+    query =
+      Searcher.search(
+        base_query,
+        SampleModel,
+        %{"uuid_field_eq" => "6de4e57f-239f-4743-bbaa-b877100a1dcf"}
+      )
+
+    Factory.create_record(%{"uuid_field" => "6de4e57f-239f-4743-bbaa-b877100a1dcf"})
+    Factory.create_record(%{"uuid_field" => "43b68577-14a2-454e-846b-15b523286cf8"})
 
     found_records = TestRepo.all(query)
 

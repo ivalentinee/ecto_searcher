@@ -13,7 +13,10 @@ defmodule EctoSearcher.Searcher do
   require Ecto.Query
   alias Ecto.Query
   alias EctoSearcher.Mapping.Default
-  alias EctoSearcher.Utils.{Field, Value, Matcher, SearchCondition}
+  alias EctoSearcher.Utils.Field
+  alias EctoSearcher.Utils.Value
+  alias EctoSearcher.Utils.Matcher
+  alias EctoSearcher.Utils.SearchCondition
 
   @type search_params() :: %{String.t() => String.t()}
   @type searchable_fields() :: [atom()]
